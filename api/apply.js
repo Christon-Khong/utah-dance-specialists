@@ -39,7 +39,8 @@ export default async function handler(req, res) {
     // accepting: "yes" | "waitlist" | "no" → Airtable Checkbox
     acceptingPatients: b.accepting === "yes",
     bio:               b.bio             || "",
-    onsiteInterest:    b.onsiteInterest  || "",
+    // Airtable Single Select options are capitalized: Yes, No, Maybe
+    onsiteInterest:    { yes: "Yes", no: "No", maybe: "Maybe" }[b.onsiteInterest] || "",
     applicationDate:   new Date().toISOString().split("T")[0],
     published:         false,
   };
