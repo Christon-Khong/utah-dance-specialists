@@ -152,20 +152,43 @@ function Nav({ current, onNav }) {
     ["providers", "For Providers"],
     ["contact", "Contact"],
   ];
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handler);
+    return () => window.removeEventListener("resize", handler);
+  }, []);
+  const handleNav = (page) => { setMenuOpen(false); onNav(page); };
   return (
     <nav style={{ position: "sticky", top: 0, zIndex: 100, background: "rgba(16,8,24,0.97)", backdropFilter: "blur(8px)", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
-      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 32px", display: "flex", justifyContent: "space-between", alignItems: "center", height: 60 }}>
-        <button onClick={() => onNav("directory")} style={{ background: "none", border: "none", cursor: "pointer", color: "#fff", fontSize: 13, letterSpacing: "0.18em", textTransform: "uppercase", fontWeight: 500, fontFamily: "'Inter',sans-serif" }}>
+      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 24px", display: "flex", justifyContent: "space-between", alignItems: "center", height: 60 }}>
+        <button onClick={() => handleNav("directory")} style={{ background: "none", border: "none", cursor: "pointer", color: "#fff", fontSize: 13, letterSpacing: "0.18em", textTransform: "uppercase", fontWeight: 500, fontFamily: "'Inter',sans-serif" }}>
           utahdancemedicine.com
         </button>
-        <div style={{ display: "flex", gap: 28 }}>
+        {isMobile ? (
+          <button onClick={() => setMenuOpen((o) => !o)} aria-label="Menu" style={{ background: "none", border: "none", cursor: "pointer", color: "#fff", fontSize: 20, lineHeight: 1, padding: "4px 6px", fontFamily: "sans-serif" }}>
+            {menuOpen ? "✕" : "☰"}
+          </button>
+        ) : (
+          <div style={{ display: "flex", gap: 28 }}>
+            {links.map(([page, label]) => (
+              <button key={page} onClick={() => handleNav(page)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 13, letterSpacing: "0.06em", fontFamily: "'Inter',sans-serif", fontWeight: current === page ? 600 : 400, color: current === page ? "#fff" : "rgba(255,255,255,0.6)", borderBottom: current === page ? "1px solid #9d4e6e" : "1px solid transparent", paddingBottom: 2, transition: "color 0.2s" }}>
+                {label}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+      {isMobile && menuOpen && (
+        <div style={{ background: "rgba(16,8,24,0.99)", borderTop: "1px solid rgba(255,255,255,0.08)", paddingBottom: 8 }}>
           {links.map(([page, label]) => (
-            <button key={page} onClick={() => onNav(page)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 13, letterSpacing: "0.06em", fontFamily: "'Inter',sans-serif", fontWeight: current === page ? 600 : 400, color: current === page ? "#fff" : "rgba(255,255,255,0.6)", borderBottom: current === page ? "1px solid #9d4e6e" : "1px solid transparent", paddingBottom: 2, transition: "color 0.2s" }}>
+            <button key={page} onClick={() => handleNav(page)} style={{ display: "block", width: "100%", textAlign: "left", background: "none", border: "none", borderLeft: current === page ? "3px solid #9d4e6e" : "3px solid transparent", cursor: "pointer", fontSize: 14, letterSpacing: "0.06em", fontFamily: "'Inter',sans-serif", fontWeight: current === page ? 600 : 400, color: current === page ? "#fff" : "rgba(255,255,255,0.7)", padding: "13px 28px", transition: "color 0.2s" }}>
               {label}
             </button>
           ))}
         </div>
-      </div>
+      )}
     </nav>
   );
 }

@@ -14,7 +14,7 @@ export default async function handler(req, res) {
   }
 
   const table  = encodeURIComponent("Providers");
-  const filter = encodeURIComponent("{published}=1");
+  const filter = encodeURIComponent("{published}=TRUE()");
   const url    = `https://api.airtable.com/v0/${baseId}/${table}?filterByFormula=${filter}&pageSize=100`;
 
   try {
