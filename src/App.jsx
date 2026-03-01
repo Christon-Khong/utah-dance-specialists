@@ -5,9 +5,9 @@ const SITE_URL = "https://utahdancemedicine.com";
 const SITE_NAME = "Utah Dance Medicine";
 const HERO_IMAGE = "/hero.jpg";
 
-// ─── Google Sheets CSV URL ────────────────────────────────────────────────────
-// Rows where the "published" column is not "TRUE" are hidden automatically.
-const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRtq5HtzS7xqKj5ypMGxjYCGGo3Dbi6JYq07OQ5VnWyfVMv7aG07VF2cO25SGNJCUk1xR0Pp4_85jww/pub?output=csv";
+// ─── Data source ─────────────────────────────────────────────────────────────
+// Live data comes from /api/providers (Vercel serverless → Airtable).
+// specialists.json is the instant fallback shown while that fetch resolves.
 
 // ─── COLOR PALETTE ────────────────────────────────────────────────────────────
 // The app auto-assigns card colors by cycling through this palette in order.
@@ -23,55 +23,33 @@ const COLOR_PALETTE = [
   { color: "#7a2040", bgLight: "#fdf0f4", borderColor: "#e8b0c8", badgeBg: "#f5d8e8", badgeText: "#5a1030" },
 ];
 
+// Maps a provider's primary specialty to a fixed palette entry so color is
+// consistent and meaningful rather than just sequential.
+const SPECIALTY_COLORS = {
+  "PT":                 COLOR_PALETTE[0],  // rose/mauve
+  "MD":                 COLOR_PALETTE[4],  // blue
+  "DO":                 COLOR_PALETTE[1],  // purple
+  "Surgeon":            COLOR_PALETTE[7],  // dark red
+  "Pilates Instructor": COLOR_PALETTE[2],  // teal
+  "Gyrotonics":         COLOR_PALETTE[3],  // amber
+  "Personal Trainer":   COLOR_PALETTE[5],  // plum
+  "Athletic Trainer":   COLOR_PALETTE[6],  // green
+};
+
 function applyPalette(specialists) {
-  return specialists.map((s, i) => ({
-    ...s,
-    ...COLOR_PALETTE[i % COLOR_PALETTE.length],
-    initials: s.name
-      ? s.name.split(" ").filter(Boolean).map((n) => n[0].toUpperCase()).filter((_, j, a) => j === 0 || j === a.length - 1).join("").slice(0, 2)
-      : "??",
-  }));
+  return specialists.map((s, i) => {
+    const primary = Array.isArray(s.specialty) ? s.specialty[0] : s.specialty;
+    const palette = SPECIALTY_COLORS[primary] || COLOR_PALETTE[i % COLOR_PALETTE.length];
+    return {
+      ...s,
+      ...palette,
+      initials: s.name
+        ? s.name.split(" ").filter(Boolean).map((n) => n[0].toUpperCase()).filter((_, j, a) => j === 0 || j === a.length - 1).join("").slice(0, 2)
+        : "??",
+    };
+  });
 }
 
-// ─── CSV PARSER ────────────────────────────────────────────────────────────────
-function parseCSVRow(row) {
-  const result = [];
-  let current = "";
-  let inQuotes = false;
-  for (let i = 0; i < row.length; i++) {
-    if (row[i] === '"') { inQuotes = !inQuotes; }
-    else if (row[i] === "," && !inQuotes) { result.push(current.trim()); current = ""; }
-    else { current += row[i]; }
-  }
-  result.push(current.trim());
-  return result;
-}
-
-function csvToSpecialists(csv) {
-  const lines = csv.trim().split("\n");
-  const headers = parseCSVRow(lines[0]).map((h) => h.replace(/^"|"$/g, ""));
-  return lines.slice(1).map((line) => {
-    const values = parseCSVRow(line);
-    const obj = {};
-    headers.forEach((h, i) => { obj[h] = (values[i] || "").replace(/^"|"$/g, ""); });
-    return obj;
-  }).filter((row) => row.published === "TRUE" || row.published === "true" || row.published === "yes").map((row) => ({
-    id: row.id,
-    name: row.name,
-    degrees: row.degrees,
-    certifications: row.certifications ? row.certifications.split("|").map((c) => c.trim()) : [],
-    locations: row.locations ? row.locations.split("|").map((l) => l.trim()) : [],
-    insurances: row.insurances ? row.insurances.split("|").map((i) => i.trim()) : [],
-    contactMethod: row.contactMethod || "Clinic",
-    contactInfo: row.contactInfo || "",
-    acceptingPatients: row.acceptingPatients === "TRUE" || row.acceptingPatients === "true",
-    bio: row.bio || "",
-    website: row.website || null,
-    address: row.address || "",
-    lat: row.lat ? parseFloat(row.lat) : null,
-    lng: row.lng ? parseFloat(row.lng) : null,
-  }));
-}
 
 // ─── GEOCODING (Nominatim + localStorage cache) ────────────────────────────────
 // Converts a street address to lat/lng using OpenStreetMap's free API.
@@ -261,7 +239,6 @@ function Dropdown({ label, icon, options, selected, onChange }) {
 // ─── SPECIALIST CARD ──────────────────────────────────────────────────────────
 function SpecialistCard({ s, distance }) {
   const [open, setOpen] = useState(false);
-  const isEmail = s.contactInfo.includes("@");
   return (
     <div
       style={{ background: "#fff", borderRadius: 20, border: "1px solid " + s.borderColor, boxShadow: "0 4px 24px rgba(0,0,0,0.06)", overflow: "hidden", display: "flex", flexDirection: "column", transition: "box-shadow 0.25s, transform 0.25s", fontFamily: "'Inter',sans-serif" }}
@@ -297,14 +274,16 @@ function SpecialistCard({ s, distance }) {
           ))}
         </div>
         <div style={{ width: "100%", height: 1, background: "#f4f4f4" }} />
-        <div style={{ display: "flex", gap: 10, alignItems: "flex-start", fontSize: 13, color: "#555", lineHeight: 1.5 }}>
-          <span style={{ flexShrink: 0 }}>📍</span>
-          <span>{s.locations.join(" · ")}</span>
-        </div>
-        <div style={{ display: "flex", gap: 10, alignItems: "flex-start", fontSize: 13, color: "#555", lineHeight: 1.5 }}>
-          <span style={{ flexShrink: 0 }}>{isEmail ? "✉️" : "📞"}</span>
-          <span>{s.contactInfo} · {s.contactMethod}</span>
-        </div>
+        {s.address && (
+          <div style={{ display: "flex", gap: 10, alignItems: "flex-start", fontSize: 13, color: "#555", lineHeight: 1.5 }}>
+            <span style={{ flexShrink: 0 }}>📍</span>
+            <a href={"https://maps.google.com/maps?q=" + encodeURIComponent(s.address)} target="_blank" rel="noopener noreferrer" style={{ color: "#555", textDecoration: "none" }}>{s.address}</a>
+          </div>
+        )}
+        {s.clinicPhone   && <div style={{ display: "flex", gap: 10, fontSize: 13, color: "#555" }}><span>📞</span><span>{s.clinicPhone}</span></div>}
+        {s.clinicEmail   && <div style={{ display: "flex", gap: 10, fontSize: 13, color: "#555" }}><span>✉️</span><span>{s.clinicEmail}</span></div>}
+        {s.personalPhone && <div style={{ display: "flex", gap: 10, fontSize: 13, color: "#555" }}><span>📞</span><span>{s.personalPhone}</span></div>}
+        {s.personalEmail && <div style={{ display: "flex", gap: 10, fontSize: 13, color: "#555" }}><span>✉️</span><span>{s.personalEmail}</span></div>}
         <div style={{ display: "flex", gap: 10, alignItems: "flex-start", fontSize: 13, color: "#555", lineHeight: 1.5 }}>
           <span style={{ flexShrink: 0 }}>🛡️</span>
           <span>{s.insurances.join(", ")}</span>
@@ -338,13 +317,15 @@ function DirectoryPage({ onNav }) {
   useEffect(() => {
     async function load() {
       let raw = specialistsData;
-      if (GOOGLE_SHEET_CSV_URL) {
-        try {
-          const res = await fetch(GOOGLE_SHEET_CSV_URL);
-          const csv = await res.text();
-          raw = csvToSpecialists(csv);
-        } catch {}
-      }
+      try {
+        const res = await fetch("/api/providers");
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data.providers) && data.providers.length > 0) {
+            raw = data.providers;
+          }
+        }
+      } catch {}
       const withPalette = applyPalette(raw);
       // Apply any already-cached coordinates immediately
       const cache = getGeoCache();
@@ -409,7 +390,7 @@ function DirectoryPage({ onNav }) {
   const filtered = useMemo(() => {
     const q = query.toLowerCase();
     let result = specialists.filter((s) => {
-      const matchQ = !q || s.name.toLowerCase().includes(q) || s.certifications.some((c) => c.toLowerCase().includes(q)) || s.locations.some((l) => l.toLowerCase().includes(q));
+      const matchQ = !q || s.name.toLowerCase().includes(q) || s.certifications.some((c) => c.toLowerCase().includes(q)) || (s.address && s.address.toLowerCase().includes(q));
       const matchC = certs.length === 0 || certs.some((c) => s.certifications.includes(c));
       const matchI = insurance.length === 0 || insurance.some((i) => s.insurances.includes(i));
       const matchAccepting = !acceptingOnly || s.acceptingPatients;
@@ -530,7 +511,7 @@ function DirectoryPage({ onNav }) {
             </p>
           </div>
           <button onClick={() => onNav("providers")} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 12, fontWeight: 600, color: "#9d4e6e", fontFamily: "'Inter',sans-serif", letterSpacing: "0.08em", textTransform: "uppercase" }}>
-            List Your Practice →
+            Join the Directory →
           </button>
         </div>
         {filtered.length === 0 ? (
@@ -603,7 +584,7 @@ function AboutPage({ onNav }) {
         <p style={{ fontSize: 15, color: "#555", lineHeight: 1.9, fontFamily: "'Inter',sans-serif" }}>Every provider in our directory has been reviewed for dance-relevant credentials. We prioritize transparency: you can see exactly what each provider specializes in, which insurances they accept, and whether they're currently taking new patients.</p>
         <div style={{ marginTop: 48, display: "flex", gap: 16, flexWrap: "wrap" }}>
           <button onClick={() => onNav("directory")} style={{ padding: "14px 28px", borderRadius: 50, background: "#9d4e6e", border: "none", color: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "'Inter',sans-serif", letterSpacing: "0.06em", textTransform: "uppercase" }}>Find a Specialist</button>
-          <button onClick={() => onNav("providers")} style={{ padding: "14px 28px", borderRadius: 50, background: "none", border: "1.5px solid #9d4e6e", color: "#9d4e6e", fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "'Inter',sans-serif", letterSpacing: "0.06em", textTransform: "uppercase" }}>List Your Practice</button>
+          <button onClick={() => onNav("providers")} style={{ padding: "14px 28px", borderRadius: 50, background: "none", border: "1.5px solid #9d4e6e", color: "#9d4e6e", fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "'Inter',sans-serif", letterSpacing: "0.06em", textTransform: "uppercase" }}>Join the Directory</button>
         </div>
       </div>
     </div>
@@ -737,9 +718,10 @@ function ProvidersPage() {
     practiceName: "",
     website: "",
     // How dancers contact this provider (publicly displayed)
-    contactPref: "",      // "clinic" | "direct"
-    publicPhone: "",
-    publicEmail: "",
+    clinicPhone: "",
+    clinicEmail: "",
+    personalPhone: "",
+    personalEmail: "",
     // Admin-only contact (private, never shown to dancers)
     adminEmail: "",
     adminPhone: "",
@@ -757,7 +739,7 @@ function ProvidersPage() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(false);
 
-  const certOptions = ["Dance Medicine", "Dry Needling", "Pilates", "Pelvic Health", "Schroth", "Sports Medicine", "Osteopathic Manipulation", "Injury Prevention", "Strength & Conditioning"];
+  const certOptions = ["Dry Needling", "Pilates", "Pelvic Health", "Schroth", "Strength & Conditioning", "Gyrotonics", "Personal Trainer", "Other"];
   const toggleCert = (cert) => setForm((f) => ({ ...f, certifications: f.certifications.includes(cert) ? f.certifications.filter((c) => c !== cert) : [...f.certifications, cert] }));
 
   const handleSubmit = async (e) => {
@@ -771,9 +753,10 @@ function ProvidersPage() {
         "Credentials / Degrees": form.credentials,
         "Practice / Clinic Name": form.practiceName,
         "Website": form.website,
-        "Contact Preference (for dancers)": form.contactPref === "clinic" ? "Through my clinic" : "Direct contact is fine",
-        "Public Phone": form.publicPhone,
-        "Public Email": form.publicEmail,
+        "Clinic Phone": form.clinicPhone,
+        "Clinic Email": form.clinicEmail,
+        "Direct Phone": form.personalPhone,
+        "Direct Email": form.personalEmail,
         "PRIVATE — Admin Email": form.adminEmail,
         "PRIVATE — Admin Phone": form.adminPhone,
         "Practice Address": form.practiceAddress,
@@ -855,34 +838,17 @@ function ProvidersPage() {
 
             {/* ── SECTION 2: How can dancers contact you ── */}
             <div style={{ background: "#fff", borderRadius: 20, padding: "32px", border: "1px solid #ede8e4", marginBottom: 20 }}>
-              <p style={sectionLabelStyle}>How can dancers contact you? (publicly displayed)</p>
+              <p style={sectionLabelStyle}>Contact Information (publicly displayed)</p>
               <div style={dividerStyle} />
               <p style={{ fontSize: 13, color: "#666", lineHeight: 1.7, margin: "0 0 20px", fontFamily: "'Inter',sans-serif" }}>
-                Some providers prefer dancers reach them through their clinic. Others are comfortable with direct personal contact. Choose what works best for you — this is what will appear on your profile card.
+                Fill in whichever contact methods you'd like visible on your directory card. At least one is required.
               </p>
-              <div style={{ display: "flex", gap: 14, marginBottom: 20, flexWrap: "wrap" }}>
-                {[["clinic", "Through my clinic", "Clinic phone or email is displayed"], ["direct", "Direct contact is fine", "Your personal number or email is displayed"]].map(([val, label, desc]) => (
-                  <label key={val} onClick={() => setForm((f) => ({ ...f, contactPref: val }))} style={{ flex: "1 1 200px", display: "flex", gap: 12, alignItems: "flex-start", padding: "16px 18px", borderRadius: 14, border: "1.5px solid " + (form.contactPref === val ? "#9d4e6e" : "#e0dbd6"), background: form.contactPref === val ? "#fdf2f6" : "#faf9f8", cursor: "pointer" }}>
-                    <input type="radio" name="contactPref" value={val} checked={form.contactPref === val} onChange={() => setForm((f) => ({ ...f, contactPref: val }))} style={{ accentColor: "#9d4e6e", marginTop: 2, flexShrink: 0 }} />
-                    <div>
-                      <div style={{ fontSize: 14, fontWeight: 600, color: "#222", fontFamily: "'Inter',sans-serif" }}>{label}</div>
-                      <div style={{ fontSize: 12, color: "#888", marginTop: 3, fontFamily: "'Inter',sans-serif" }}>{desc}</div>
-                    </div>
-                  </label>
-                ))}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                <div><label style={labelStyle}>Clinic Phone</label><input value={form.clinicPhone} onChange={(e) => setForm((f) => ({ ...f, clinicPhone: e.target.value }))} style={inputStyle} placeholder="(801) 555-0100" /></div>
+                <div><label style={labelStyle}>Clinic Email</label><input type="email" value={form.clinicEmail} onChange={(e) => setForm((f) => ({ ...f, clinicEmail: e.target.value }))} style={inputStyle} placeholder="info@yourclinic.com" /></div>
+                <div><label style={labelStyle}>Direct Phone</label><input value={form.personalPhone} onChange={(e) => setForm((f) => ({ ...f, personalPhone: e.target.value }))} style={inputStyle} placeholder="(801) 555-0100" /></div>
+                <div><label style={labelStyle}>Direct Email</label><input type="email" value={form.personalEmail} onChange={(e) => setForm((f) => ({ ...f, personalEmail: e.target.value }))} style={inputStyle} placeholder="you@example.com" /></div>
               </div>
-              {form.contactPref && (
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-                  <div>
-                    <label style={labelStyle}>{form.contactPref === "clinic" ? "Clinic Phone" : "Direct Phone"}</label>
-                    <input value={form.publicPhone} onChange={(e) => setForm((f) => ({ ...f, publicPhone: e.target.value }))} style={inputStyle} placeholder="(801) 555-0100" />
-                  </div>
-                  <div>
-                    <label style={labelStyle}>{form.contactPref === "clinic" ? "Clinic Email" : "Direct Email"}</label>
-                    <input type="email" value={form.publicEmail} onChange={(e) => setForm((f) => ({ ...f, publicEmail: e.target.value }))} style={inputStyle} placeholder={form.contactPref === "clinic" ? "clinic@example.com" : "you@example.com"} />
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* ── SECTION 3: Private / Admin contact ── */}
