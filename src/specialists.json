@@ -10,14 +10,10 @@
     "contactInfo": "(801) 555-0142",
     "acceptingPatients": true,
     "bio": "Former Ballet West dancer with 12 years specializing in performing arts medicine. Combines manual therapy, Pilates-based rehab, and sport-specific training to return dancers to peak performance.",
-    "website": "https://utahdancespecialists.com",
-    "onsiteAvailable": true,
-    "initials": "SM",
-    "color": "#9d4e6e",
-    "bgLight": "#fdf2f6",
-    "borderColor": "#f0c4d8",
-    "badgeBg": "#fce8f1",
-    "badgeText": "#7a2d4f"
+    "website": "https://yourpractice.com",
+    "address": "Salt Lake City, UT",
+    "lat": 40.7608,
+    "lng": -111.8910
   },
   {
     "id": 2,
@@ -30,14 +26,10 @@
     "contactInfo": "(801) 555-0278",
     "acceptingPatients": true,
     "bio": "Board-certified sports medicine physician with a fellowship focus on performing arts injuries. Works closely with university dance programs along the Wasatch Front.",
-    "website": "https://utahdancespecialists.com",
-    "onsiteAvailable": false,
-    "initials": "JO",
-    "color": "#5a4a8a",
-    "bgLight": "#f4f2fb",
-    "borderColor": "#d0c8f0",
-    "badgeBg": "#ece8f8",
-    "badgeText": "#3e2e70"
+    "website": null,
+    "address": "Provo, UT",
+    "lat": 40.2338,
+    "lng": -111.6585
   },
   {
     "id": 3,
@@ -47,17 +39,13 @@
     "locations": ["Salt Lake City"],
     "insurances": ["Blue Cross Blue Shield", "Medicaid", "U of U Health Plans"],
     "contactMethod": "Personal",
-    "contactInfo": "emily.chen@utahdancespecialists.com",
+    "contactInfo": "emily@yourclinic.com",
     "acceptingPatients": true,
     "bio": "Passionate about pelvic health for dancers of all ages. Specialized in Schroth scoliosis management and Pilates-based rehab. Takes a whole-body approach to movement health.",
     "website": null,
-    "onsiteAvailable": true,
-    "initials": "EC",
-    "color": "#2d7a6e",
-    "bgLight": "#f0faf8",
-    "borderColor": "#b2ddd8",
-    "badgeBg": "#daf2ef",
-    "badgeText": "#1a5a50"
+    "address": "Salt Lake City, UT",
+    "lat": 40.7608,
+    "lng": -111.8910
   },
   {
     "id": 4,
@@ -70,14 +58,10 @@
     "contactInfo": "(801) 555-0391",
     "acceptingPatients": false,
     "bio": "Combines osteopathic principles with evidence-based sports medicine. On-site medical provider for Ogden's Contemporary Dance Festival for five consecutive years.",
-    "website": "https://utahdancespecialists.com",
-    "onsiteAvailable": true,
-    "initials": "RA",
-    "color": "#a06030",
-    "bgLight": "#fdf8f2",
-    "borderColor": "#f0ddc0",
-    "badgeBg": "#faebd4",
-    "badgeText": "#7a4520"
+    "website": "https://yourpractice.com",
+    "address": "Ogden, UT",
+    "lat": 41.2230,
+    "lng": -111.9738
   },
   {
     "id": 5,
@@ -91,13 +75,9 @@
     "acceptingPatients": true,
     "bio": "Brings a performance-enhancement lens to dance rehab in southern Utah. Background in strength and conditioning bridges the gap between rehab and return-to-dance.",
     "website": null,
-    "onsiteAvailable": false,
-    "initials": "MB",
-    "color": "#1e6091",
-    "bgLight": "#f0f6fc",
-    "borderColor": "#b8d8f0",
-    "badgeBg": "#d8edf8",
-    "badgeText": "#0d4470"
+    "address": "St. George, UT",
+    "lat": 37.0965,
+    "lng": -113.5684
   },
   {
     "id": 6,
@@ -107,16 +87,12 @@
     "locations": ["Salt Lake City", "Provo"],
     "insurances": ["Contact for details"],
     "contactMethod": "Personal",
-    "contactInfo": "priya.sharma@utahdancespecialists.com",
+    "contactInfo": "priya@yourclinic.com",
     "acceptingPatients": true,
-    "bio": "Researcher and certified athletic trainer specializing in injury prevention. Developed a dance-specific screening protocol used by multiple Utah companies. Offers pre-season risk assessments and onsite coverage.",
-    "website": "https://utahdancespecialists.com",
-    "onsiteAvailable": true,
-    "initials": "PS",
-    "color": "#8a3a6e",
-    "bgLight": "#fcf2f8",
-    "borderColor": "#e8c0da",
-    "badgeBg": "#f5e0ef",
-    "badgeText": "#6a1a50"
+    "bio": "Researcher and certified athletic trainer specializing in injury prevention. Developed a dance-specific screening protocol used by multiple Utah companies.",
+    "website": "https://yourpractice.com",
+    "address": "Salt Lake City, UT",
+    "lat": 40.7608,
+    "lng": -111.8910
   }
 ]
