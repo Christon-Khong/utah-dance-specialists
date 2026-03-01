@@ -20,8 +20,8 @@ const certificationOptions = [
 const Dropdown = ({ label, options, value, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <div style={ position: "relative", marginBottom: "1rem" }>
-      <label style={
+    <div style={{ position: "relative", marginBottom: "1rem" }}>
+      <label style={{
         display: "block",
         fontSize: "0.875rem",
         fontWeight: "600",
@@ -32,7 +32,7 @@ const Dropdown = ({ label, options, value, onChange }) => {
       </label>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        style={
+        style={{
           width: "100%",
           padding: "0.75rem",
           border: "1px solid #e0d5cc",
@@ -48,7 +48,7 @@ const Dropdown = ({ label, options, value, onChange }) => {
         {value ? options.find(o => o.value === value)?.label : "Select..."}
       </button>
       {isOpen && (
-        <div style={
+        <div style={{
           position: "absolute",
           top: "100%",
           left: "0",
@@ -67,7 +67,7 @@ const Dropdown = ({ label, options, value, onChange }) => {
                 onChange(option.value);
                 setIsOpen(false);
               }}
-              style={
+              style={{
                 padding: "0.75rem",
                 cursor: "pointer",
                 backgroundColor: value === option.value ? "#f4f2fb" : "#fff",
@@ -89,7 +89,7 @@ const Dropdown = ({ label, options, value, onChange }) => {
 const SpecialistCard = ({ specialist }) => {
   const [expanded, setExpanded] = useState(false);
   return (
-    <div style={
+    <div style={{
       border: "1px solid #e0d5cc",
       borderRadius: "0.5rem",
       padding: "1.5rem",
@@ -100,8 +100,8 @@ const SpecialistCard = ({ specialist }) => {
     onMouseEnter={e => e.currentTarget.style.boxShadow = "0 8px 24px rgba(157, 78, 110, 0.15)"}
     onMouseLeave={e => e.currentTarget.style.boxShadow = "none"}
     >
-      <div style={ marginBottom: "1rem" }>
-        <h3 style={
+      <div style={{ marginBottom: "1rem" }}>
+        <h3 style={{
           margin: "0 0 0.5rem 0",
           fontSize: "1.25rem",
           fontFamily: "'Cormorant Garamond', serif",
@@ -110,7 +110,7 @@ const SpecialistCard = ({ specialist }) => {
         }>
           {specialist.name}
         </h3>
-        <p style={
+        <p style={{
           margin: "0",
           fontSize: "0.875rem",
           color: "#9d4e6e",
@@ -121,7 +121,7 @@ const SpecialistCard = ({ specialist }) => {
       </div>
 
       {specialist.specialty && (
-        <p style={
+        <p style={{
           margin: "0.75rem 0",
           fontSize: "0.875rem",
           color: "#666",
@@ -132,7 +132,7 @@ const SpecialistCard = ({ specialist }) => {
       )}
 
       {specialist.locations && specialist.locations.length > 0 && (
-        <p style={
+        <p style={{
           margin: "0.75rem 0",
           fontSize: "0.875rem",
           color: "#666"
@@ -142,7 +142,7 @@ const SpecialistCard = ({ specialist }) => {
       )}
 
       {specialist.accepting && (
-        <p style={
+        <p style={{
           margin: "0.75rem 0",
           fontSize: "0.875rem",
           color: "#27a745",
@@ -154,7 +154,7 @@ const SpecialistCard = ({ specialist }) => {
 
       <button
         onClick={() => setExpanded(!expanded)}
-        style={
+        style={{
           marginTop: "1rem",
           padding: "0.5rem 1rem",
           backgroundColor: "#9d4e6e",
@@ -173,9 +173,9 @@ const SpecialistCard = ({ specialist }) => {
       </button>
 
       {expanded && (
-        <div style={ marginTop: "1rem", paddingTop: "1rem", borderTop: "1px solid #e0d5cc" }>
+        <div style={{ marginTop: "1rem", paddingTop: "1rem", borderTop: "1px solid #e0d5cc" }}>
           {specialist.bio && (
-            <p style={
+            <p style={{
               margin: "0.75rem 0",
               fontSize: "0.875rem",
               color: "#666",
@@ -186,8 +186,8 @@ const SpecialistCard = ({ specialist }) => {
           )}
 
           {specialist.certifications && specialist.certifications.length > 0 && (
-            <div style={ margin: "0.75rem 0" }>
-              <p style={
+            <div style={{ margin: "0.75rem 0" }}>
+              <p style={{
                 margin: "0 0 0.5rem 0",
                 fontSize: "0.75rem",
                 fontWeight: "600",
@@ -197,22 +197,22 @@ const SpecialistCard = ({ specialist }) => {
               }>
                 Certifications
               </p>
-              <ul style={
+              <ul style={{
                 margin: "0",
                 paddingLeft: "1.25rem",
                 fontSize: "0.875rem",
                 color: "#666"
               }>
                 {specialist.certifications.map((cert, idx) => (
-                  <li key={idx} style={ marginBottom: "0.25rem" }>{cert}</li>
+                  <li key={idx} style={{ marginBottom: "0.25rem" }}>{cert}</li>
                 ))}
               </ul>
             </div>
           )}
 
           {specialist.insurances && specialist.insurances.length > 0 && (
-            <div style={ margin: "0.75rem 0" }>
-              <p style={
+            <div style={{ margin: "0.75rem 0" }}>
+              <p style={{
                 margin: "0 0 0.5rem 0",
                 fontSize: "0.75rem",
                 fontWeight: "600",
@@ -222,7 +222,7 @@ const SpecialistCard = ({ specialist }) => {
               }>
                 Insurances Accepted
               </p>
-              <p style={
+              <p style={{
                 margin: "0",
                 fontSize: "0.875rem",
                 color: "#666"
@@ -233,7 +233,7 @@ const SpecialistCard = ({ specialist }) => {
           )}
 
           {specialist.onsite && (
-            <p style={
+            <p style={{
               margin: "0.75rem 0",
               fontSize: "0.875rem",
               color: "#27a745",
@@ -244,8 +244,8 @@ const SpecialistCard = ({ specialist }) => {
           )}
 
           {specialist.website && (
-            <p style={ margin: "0.75rem 0" }>
-              <a href={specialist.website} target="_blank" rel="noopener noreferrer" style={
+            <p style={{ margin: "0.75rem 0" }}>
+              <a href={specialist.website} target="_blank" rel="noopener noreferrer" style={{
                 fontSize: "0.875rem",
                 color: "#9d4e6e",
                 textDecoration: "none",
@@ -271,7 +271,7 @@ const SharedNav = ({ currentPage, setCurrentPage }) => {
   ];
 
   return (
-    <nav style={
+    <nav style={{
       position: "sticky",
       top: "0",
       zIndex: "100",
@@ -282,7 +282,7 @@ const SharedNav = ({ currentPage, setCurrentPage }) => {
       justifyContent: "space-between",
       alignItems: "center"
     }>
-      <div style={
+      <div style={{
         fontSize: "1.5rem",
         fontFamily: "'Cormorant Garamond', serif",
         fontWeight: "700",
@@ -293,12 +293,12 @@ const SharedNav = ({ currentPage, setCurrentPage }) => {
       >
         💃 Utah Dance Medicine
       </div>
-      <div style={ display: "flex", gap: "2rem" }>
+      <div style={{ display: "flex", gap: "2rem" }}>
         {navItems.map(item => (
           <button
             key={item.key}
             onClick={() => setCurrentPage(item.key)}
-            style={
+            style={{
               backgroundColor: "transparent",
               border: "none",
               cursor: "pointer",
@@ -331,13 +331,13 @@ const SharedNav = ({ currentPage, setCurrentPage }) => {
 // ─── SHARED FOOTER ───
 const SharedFooter = ({ setCurrentPage }) => {
   return (
-    <footer style={
+    <footer style={{
       backgroundColor: "#100818",
       color: "#f9f7f4",
       padding: "3rem 2rem",
       marginTop: "4rem"
     }>
-      <div style={
+      <div style={{
         maxWidth: "1200px",
         margin: "0 auto",
         display: "grid",
@@ -347,7 +347,7 @@ const SharedFooter = ({ setCurrentPage }) => {
         borderBottom: "1px solid rgba(157, 78, 110, 0.3)"
       }>
         <div>
-          <h4 style={
+          <h4 style={{
             fontSize: "1.25rem",
             fontFamily: "'Cormorant Garamond', serif",
             margin: "0 0 0.5rem 0",
@@ -355,7 +355,7 @@ const SharedFooter = ({ setCurrentPage }) => {
           }>
             💃 Utah Dance Medicine
           </h4>
-          <p style={
+          <p style={{
             margin: "0.5rem 0 0 0",
             fontSize: "0.875rem",
             color: "#b8b0a8",
@@ -365,7 +365,7 @@ const SharedFooter = ({ setCurrentPage }) => {
           </p>
         </div>
         <div>
-          <h5 style={
+          <h5 style={{
             fontSize: "0.875rem",
             fontWeight: "600",
             margin: "0 0 1rem 0",
@@ -379,7 +379,7 @@ const SharedFooter = ({ setCurrentPage }) => {
             <button
               key={page}
               onClick={() => setCurrentPage(page)}
-              style={
+              style={{
                 display: "block",
                 backgroundColor: "transparent",
                 border: "none",
@@ -398,7 +398,7 @@ const SharedFooter = ({ setCurrentPage }) => {
           ))}
         </div>
         <div>
-          <h5 style={
+          <h5 style={{
             fontSize: "0.875rem",
             fontWeight: "600",
             margin: "0 0 1rem 0",
@@ -408,14 +408,14 @@ const SharedFooter = ({ setCurrentPage }) => {
           }>
             Contact
           </h5>
-          <p style={
+          <p style={{
             margin: "0 0 0.5rem 0",
             fontSize: "0.875rem",
             color: "#b8b0a8"
           }>
             info@utahdancespecialists.com
           </p>
-          <p style={
+          <p style={{
             margin: "0",
             fontSize: "0.875rem",
             color: "#b8b0a8"
@@ -424,13 +424,13 @@ const SharedFooter = ({ setCurrentPage }) => {
           </p>
         </div>
       </div>
-      <div style={
+      <div style={{
         marginTop: "2rem",
         textAlign: "center",
         fontSize: "0.75rem",
         color: "#8b7d75"
       }>
-        <p style={ margin: "0" }>
+        <p style={{ margin: "0" }}>
           © 2026 Utah Dance Medicine. All rights reserved.
         </p>
       </div>
@@ -458,9 +458,9 @@ const DirectoryPage = () => {
   const specialties = [...new Set(specialists.map(s => s.specialty))];
 
   return (
-    <div style={ flex: "1" }>
+    <div style={{ flex: "1" }}>
       {/* HERO SECTION */}
-      <div style={
+      <div style={{
         backgroundImage: `url('${HERO_IMAGE}')`,
         backgroundSize: "cover",
         backgroundPosition: "center",
@@ -472,7 +472,7 @@ const DirectoryPage = () => {
         textAlign: "center",
         position: "relative"
       }>
-        <div style={
+        <div style={{
           position: "absolute",
           top: "0",
           left: "0",
@@ -480,8 +480,8 @@ const DirectoryPage = () => {
           bottom: "0",
           backgroundColor: "rgba(0,0,0,0.35)"
         }></div>
-        <div style={ position: "relative", zIndex: "2" }>
-          <h1 style={
+        <div style={{ position: "relative", zIndex: "2" }}>
+          <h1 style={{
             fontSize: "3.5rem",
             fontFamily: "'Cormorant Garamond', serif",
             margin: "0 0 1rem 0",
@@ -489,7 +489,7 @@ const DirectoryPage = () => {
           }>
             Find Your Dance Medicine Specialist
           </h1>
-          <p style={
+          <p style={{
             fontSize: "1.125rem",
             margin: "0",
             fontWeight: "300"
@@ -500,19 +500,19 @@ const DirectoryPage = () => {
       </div>
 
       {/* SEARCH SECTION */}
-      <div style={
+      <div style={{
         backgroundColor: "#f9f7f4",
         padding: "3rem 2rem",
         maxWidth: "1200px",
         margin: "0 auto"
       }>
-        <div style={ marginBottom: "2rem" }>
+        <div style={{ marginBottom: "2rem" }}>
           <input
             type="text"
             placeholder="Search by name, title, or specialty..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
-            style={
+            style={{
               width: "100%",
               padding: "1rem",
               fontSize: "1rem",
@@ -524,7 +524,7 @@ const DirectoryPage = () => {
           />
         </div>
 
-        <div style={
+        <div style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
           gap: "1.5rem",
@@ -541,7 +541,7 @@ const DirectoryPage = () => {
           />
 
           <div>
-            <label style={
+            <label style={{
               display: "flex",
               alignItems: "center",
               cursor: "pointer",
@@ -552,7 +552,7 @@ const DirectoryPage = () => {
                 type="checkbox"
                 checked={acceptingOnly}
                 onChange={e => setAcceptingOnly(e.target.checked)}
-                style={
+                style={{
                   marginRight: "0.5rem",
                   cursor: "pointer",
                   width: "1rem",
@@ -564,7 +564,7 @@ const DirectoryPage = () => {
           </div>
         </div>
 
-        <p style={
+        <p style={{
           fontSize: "0.875rem",
           color: "#666",
           marginBottom: "2rem"
@@ -572,7 +572,7 @@ const DirectoryPage = () => {
           {filteredSpecialists.length} specialist{filteredSpecialists.length !== 1 ? "s" : ""} found
         </p>
 
-        <div style={
+        <div style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
           gap: "2rem"
@@ -583,12 +583,12 @@ const DirectoryPage = () => {
         </div>
 
         {filteredSpecialists.length === 0 && (
-          <div style={
+          <div style={{
             textAlign: "center",
             padding: "3rem 2rem",
             color: "#999"
           }>
-            <p style={ fontSize: "1rem", margin: "0" }>
+            <p style={{ fontSize: "1rem", margin: "0" }}>
               No specialists found matching your criteria. Try adjusting your filters.
             </p>
           </div>
@@ -626,14 +626,14 @@ const AboutPage = () => {
   ];
 
   return (
-    <div style={ flex: "1" }>
+    <div style={{ flex: "1" }}>
       {/* HERO SECTION */}
-      <div style={
+      <div style={{
         background: "linear-gradient(135deg, #fdf2f6 0%, #f4f2fb 100%)",
         padding: "5rem 2rem",
         textAlign: "center"
       }>
-        <h1 style={
+        <h1 style={{
           fontSize: "3rem",
           fontFamily: "'Cormorant Garamond', serif",
           margin: "0 0 1rem 0",
@@ -642,7 +642,7 @@ const AboutPage = () => {
         }>
           Where Dance Meets Medicine
         </h1>
-        <p style={
+        <p style={{
           fontSize: "1.25rem",
           color: "#666",
           margin: "0",
@@ -655,33 +655,33 @@ const AboutPage = () => {
       </div>
 
       {/* MISSION CARDS */}
-      <div style={
+      <div style={{
         backgroundColor: "#f9f7f4",
         padding: "3rem 2rem",
         maxWidth: "1200px",
         margin: "0 auto"
       }>
-        <div style={
+        <div style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
           gap: "2rem",
           marginBottom: "4rem"
         }>
           {missionCards.map((card, idx) => (
-            <div key={idx} style={
+            <div key={idx} style={{
               backgroundColor: "#fff",
               padding: "2rem",
               borderRadius: "0.5rem",
               border: "1px solid #e0d5cc",
               textAlign: "center"
             }>
-              <div style={
+              <div style={{
                 fontSize: "2.5rem",
                 marginBottom: "1rem"
               }>
                 {card.icon}
               </div>
-              <h3 style={
+              <h3 style={{
                 fontSize: "1.25rem",
                 fontFamily: "'Cormorant Garamond', serif",
                 margin: "0 0 0.5rem 0",
@@ -690,7 +690,7 @@ const AboutPage = () => {
               }>
                 {card.title}
               </h3>
-              <p style={
+              <p style={{
                 margin: "0",
                 fontSize: "0.95rem",
                 color: "#666",
@@ -703,8 +703,8 @@ const AboutPage = () => {
         </div>
 
         {/* OUR STORY */}
-        <div style={ marginBottom: "4rem" }>
-          <h2 style={
+        <div style={{ marginBottom: "4rem" }}>
+          <h2 style={{
             fontSize: "2rem",
             fontFamily: "'Cormorant Garamond', serif",
             margin: "0 0 1.5rem 0",
@@ -713,10 +713,10 @@ const AboutPage = () => {
           }>
             Our Story
           </h2>
-          <div style={
+          <div style={{
             maxWidth: "800px"
           }>
-            <p style={
+            <p style={{
               fontSize: "1rem",
               lineHeight: "1.8",
               color: "#666",
@@ -724,7 +724,7 @@ const AboutPage = () => {
             }>
               Dance medicine is a specialized field that bridges the worlds of performing arts and healthcare. Dancers have unique biomechanical needs and face distinct injury patterns that general practitioners often don't understand. Yet finding a doctor or physical therapist who truly gets dance can be incredibly challenging, especially outside major metropolitan centers like New York or Los Angeles.
             </p>
-            <p style={
+            <p style={{
               fontSize: "1rem",
               lineHeight: "1.8",
               color: "#666",
@@ -732,7 +732,7 @@ const AboutPage = () => {
             }>
               Utah has a vibrant dance community—from professional companies to thriving university programs and independent studios. But dancers here often struggle to find specialists who understand their art form and the physical demands they face. We created Utah Dance Medicine to bridge that gap.
             </p>
-            <p style={
+            <p style={{
               fontSize: "1rem",
               lineHeight: "1.8",
               color: "#666"
@@ -743,8 +743,8 @@ const AboutPage = () => {
         </div>
 
         {/* WHO WE SERVE */}
-        <div style={ marginBottom: "4rem" }>
-          <h2 style={
+        <div style={{ marginBottom: "4rem" }}>
+          <h2 style={{
             fontSize: "2rem",
             fontFamily: "'Cormorant Garamond', serif",
             margin: "0 0 1.5rem 0",
@@ -753,7 +753,7 @@ const AboutPage = () => {
           }>
             Who We Serve
           </h2>
-          <div style={
+          <div style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
             gap: "2rem"
@@ -764,13 +764,13 @@ const AboutPage = () => {
               { title: "Studios & Schools", description: "Dance education institutions finding specialists for their students" },
               { title: "Performing Arts Organizations", description: "Theater companies, opera companies, and festivals with dance components" }
             ].map((item, idx) => (
-              <div key={idx} style={
+              <div key={idx} style={{
                 backgroundColor: "#fff",
                 padding: "1.5rem",
                 borderRadius: "0.5rem",
                 border: "1px solid #e0d5cc"
               }>
-                <h4 style={
+                <h4 style={{
                   fontSize: "1rem",
                   fontWeight: "600",
                   margin: "0 0 0.5rem 0",
@@ -778,7 +778,7 @@ const AboutPage = () => {
                 }>
                   {item.title}
                 </h4>
-                <p style={
+                <p style={{
                   fontSize: "0.875rem",
                   color: "#666",
                   lineHeight: "1.6",
@@ -792,13 +792,13 @@ const AboutPage = () => {
         </div>
 
         {/* STATS */}
-        <div style={
+        <div style={{
           backgroundColor: "#fff",
           padding: "3rem 2rem",
           borderRadius: "0.5rem",
           border: "1px solid #e0d5cc"
         }>
-          <div style={
+          <div style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
             gap: "2rem",
@@ -806,7 +806,7 @@ const AboutPage = () => {
           }>
             {stats.map((stat, idx) => (
               <div key={idx}>
-                <div style={
+                <div style={{
                   fontSize: "2.5rem",
                   fontFamily: "'Cormorant Garamond', serif",
                   fontWeight: "700",
@@ -815,7 +815,7 @@ const AboutPage = () => {
                 }>
                   {stat.number}
                 </div>
-                <p style={
+                <p style={{
                   fontSize: "0.875rem",
                   color: "#666",
                   margin: "0",
@@ -924,14 +924,14 @@ const ProvidersPage = () => {
   ];
 
   return (
-    <div style={ flex: "1" }>
+    <div style={{ flex: "1" }}>
       {/* HEADER */}
-      <div style={
+      <div style={{
         backgroundColor: "#f9f7f4",
         padding: "4rem 2rem",
         textAlign: "center"
       }>
-        <h1 style={
+        <h1 style={{
           fontSize: "2.5rem",
           fontFamily: "'Cormorant Garamond', serif",
           margin: "0 0 1rem 0",
@@ -940,7 +940,7 @@ const ProvidersPage = () => {
         }>
           Join the Directory
         </h1>
-        <p style={
+        <p style={{
           fontSize: "1.125rem",
           color: "#666",
           margin: "0",
@@ -952,14 +952,14 @@ const ProvidersPage = () => {
         </p>
       </div>
 
-      <div style={
+      <div style={{
         maxWidth: "1200px",
         margin: "0 auto",
         padding: "3rem 2rem"
       }>
         {/* WHY GET LISTED */}
-        <section style={ marginBottom: "4rem" }>
-          <h2 style={
+        <section style={{ marginBottom: "4rem" }}>
+          <h2 style={{
             fontSize: "2rem",
             fontFamily: "'Cormorant Garamond', serif",
             margin: "0 0 2rem 0",
@@ -968,23 +968,23 @@ const ProvidersPage = () => {
           }>
             Why Get Listed
           </h2>
-          <div style={
+          <div style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
             gap: "2rem"
           }>
             {benefits.map((benefit, idx) => (
-              <div key={idx} style={
+              <div key={idx} style={{
                 backgroundColor: "#fff",
                 padding: "2rem",
                 borderRadius: "0.5rem",
                 border: "1px solid #e0d5cc",
                 textAlign: "center"
               }>
-                <div style={ fontSize: "2.5rem", marginBottom: "1rem" }>
+                <div style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>
                   {benefit.icon}
                 </div>
-                <h3 style={
+                <h3 style={{
                   fontSize: "1.25rem",
                   fontFamily: "'Cormorant Garamond', serif",
                   margin: "0 0 0.5rem 0",
@@ -993,7 +993,7 @@ const ProvidersPage = () => {
                 }>
                   {benefit.title}
                 </h3>
-                <p style={
+                <p style={{
                   fontSize: "0.95rem",
                   color: "#666",
                   margin: "0",
@@ -1007,8 +1007,8 @@ const ProvidersPage = () => {
         </section>
 
         {/* PROFILE FIELDS */}
-        <section style={ marginBottom: "4rem" }>
-          <h2 style={
+        <section style={{ marginBottom: "4rem" }}>
+          <h2 style={{
             fontSize: "2rem",
             fontFamily: "'Cormorant Garamond', serif",
             margin: "0 0 2rem 0",
@@ -1017,19 +1017,19 @@ const ProvidersPage = () => {
           }>
             What's Included in Your Profile
           </h2>
-          <div style={
+          <div style={{
             backgroundColor: "#fff",
             padding: "2rem",
             borderRadius: "0.5rem",
             border: "1px solid #e0d5cc"
           }>
-            <ul style={
+            <ul style={{
               margin: "0",
               paddingLeft: "1.5rem",
               listStyle: "none"
             }>
               {profileFields.map((field, idx) => (
-                <li key={idx} style={
+                <li key={idx} style={{
                   padding: "0.75rem 0",
                   paddingLeft: "1.75rem",
                   position: "relative",
@@ -1037,7 +1037,7 @@ const ProvidersPage = () => {
                   color: "#666",
                   borderBottom: idx < profileFields.length - 1 ? "1px solid #f0f0f0" : "none"
                 }>
-                  <span style={
+                  <span style={{
                     position: "absolute",
                     left: "0",
                     color: "#9d4e6e",
@@ -1053,8 +1053,8 @@ const ProvidersPage = () => {
         </section>
 
         {/* HOW TO APPLY */}
-        <section style={ marginBottom: "4rem" }>
-          <h2 style={
+        <section style={{ marginBottom: "4rem" }}>
+          <h2 style={{
             fontSize: "2rem",
             fontFamily: "'Cormorant Garamond', serif",
             margin: "0 0 2rem 0",
@@ -1063,19 +1063,19 @@ const ProvidersPage = () => {
           }>
             How to Apply
           </h2>
-          <div style={
+          <div style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
             gap: "2rem"
           }>
             {steps.map((step) => (
-              <div key={step.number} style={
+              <div key={step.number} style={{
                 backgroundColor: "#fff",
                 padding: "2rem",
                 borderRadius: "0.5rem",
                 border: "1px solid #e0d5cc"
               }>
-                <div style={
+                <div style={{
                   width: "3rem",
                   height: "3rem",
                   backgroundColor: "#9d4e6e",
@@ -1091,7 +1091,7 @@ const ProvidersPage = () => {
                 }>
                   {step.number}
                 </div>
-                <h3 style={
+                <h3 style={{
                   fontSize: "1.125rem",
                   fontWeight: "600",
                   margin: "0 0 0.5rem 0",
@@ -1099,7 +1099,7 @@ const ProvidersPage = () => {
                 }>
                   {step.title}
                 </h3>
-                <p style={
+                <p style={{
                   fontSize: "0.875rem",
                   color: "#666",
                   margin: "0",
@@ -1114,7 +1114,7 @@ const ProvidersPage = () => {
 
         {/* APPLICATION FORM */}
         <section>
-          <h2 style={
+          <h2 style={{
             fontSize: "2rem",
             fontFamily: "'Cormorant Garamond', serif",
             margin: "0 0 2rem 0",
@@ -1125,7 +1125,7 @@ const ProvidersPage = () => {
           </h2>
 
           {formSubmitted && (
-            <div style={
+            <div style={{
               backgroundColor: "#d4edda",
               border: "1px solid #c3e6cb",
               color: "#155724",
@@ -1139,20 +1139,20 @@ const ProvidersPage = () => {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} style={
+          <form onSubmit={handleSubmit} style={{
             backgroundColor: "#fff",
             padding: "2rem",
             borderRadius: "0.5rem",
             border: "1px solid #e0d5cc"
           }>
-            <div style={
+            <div style={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
               gap: "1.5rem",
               marginBottom: "1.5rem"
             }>
               <div>
-                <label style={
+                <label style={{
                   display: "block",
                   fontSize: "0.875rem",
                   fontWeight: "600",
@@ -1167,7 +1167,7 @@ const ProvidersPage = () => {
                   value={formData.fullName}
                   onChange={handleInputChange}
                   required
-                  style={
+                  style={{
                     width: "100%",
                     padding: "0.75rem",
                     border: "1px solid #e0d5cc",
@@ -1179,7 +1179,7 @@ const ProvidersPage = () => {
               </div>
 
               <div>
-                <label style={
+                <label style={{
                   display: "block",
                   fontSize: "0.875rem",
                   fontWeight: "600",
@@ -1193,7 +1193,7 @@ const ProvidersPage = () => {
                   name="practiceName"
                   value={formData.practiceName}
                   onChange={handleInputChange}
-                  style={
+                  style={{
                     width: "100%",
                     padding: "0.75rem",
                     border: "1px solid #e0d5cc",
@@ -1205,14 +1205,14 @@ const ProvidersPage = () => {
               </div>
             </div>
 
-            <div style={
+            <div style={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
               gap: "1.5rem",
               marginBottom: "1.5rem"
             }>
               <div>
-                <label style={
+                <label style={{
                   display: "block",
                   fontSize: "0.875rem",
                   fontWeight: "600",
@@ -1226,7 +1226,7 @@ const ProvidersPage = () => {
                   name="phone"
                   value={formData.phone}
                   onChange={handleInputChange}
-                  style={
+                  style={{
                     width: "100%",
                     padding: "0.75rem",
                     border: "1px solid #e0d5cc",
@@ -1238,7 +1238,7 @@ const ProvidersPage = () => {
               </div>
 
               <div>
-                <label style={
+                <label style={{
                   display: "block",
                   fontSize: "0.875rem",
                   fontWeight: "600",
@@ -1253,7 +1253,7 @@ const ProvidersPage = () => {
                   value={formData.email}
                   onChange={handleInputChange}
                   required
-                  style={
+                  style={{
                     width: "100%",
                     padding: "0.75rem",
                     border: "1px solid #e0d5cc",
@@ -1265,8 +1265,8 @@ const ProvidersPage = () => {
               </div>
             </div>
 
-            <div style={ marginBottom: "1.5rem" }>
-              <label style={
+            <div style={{ marginBottom: "1.5rem" }}>
+              <label style={{
                 display: "block",
                 fontSize: "0.875rem",
                 fontWeight: "600",
@@ -1280,7 +1280,7 @@ const ProvidersPage = () => {
                 name="credentials"
                 value={formData.credentials}
                 onChange={handleInputChange}
-                style={
+                style={{
                   width: "100%",
                   padding: "0.75rem",
                   border: "1px solid #e0d5cc",
@@ -1291,8 +1291,8 @@ const ProvidersPage = () => {
               />
             </div>
 
-            <div style={ marginBottom: "1.5rem" }>
-              <label style={
+            <div style={{ marginBottom: "1.5rem" }}>
+              <label style={{
                 display: "block",
                 fontSize: "0.875rem",
                 fontWeight: "600",
@@ -1307,7 +1307,7 @@ const ProvidersPage = () => {
                 value={formData.locations}
                 onChange={handleInputChange}
                 placeholder="e.g., Salt Lake City, Provo"
-                style={
+                style={{
                   width: "100%",
                   padding: "0.75rem",
                   border: "1px solid #e0d5cc",
@@ -1318,8 +1318,8 @@ const ProvidersPage = () => {
               />
             </div>
 
-            <div style={ marginBottom: "1.5rem" }>
-              <label style={
+            <div style={{ marginBottom: "1.5rem" }}>
+              <label style={{
                 display: "block",
                 fontSize: "0.875rem",
                 fontWeight: "600",
@@ -1328,13 +1328,13 @@ const ProvidersPage = () => {
               }>
                 Certifications (select all that apply)
               </label>
-              <div style={
+              <div style={{
                 display: "grid",
                 gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
                 gap: "1rem"
               }>
                 {certificationOptions.map(cert => (
-                  <label key={cert} style={
+                  <label key={cert} style={{
                     display: "flex",
                     alignItems: "center",
                     cursor: "pointer",
@@ -1344,7 +1344,7 @@ const ProvidersPage = () => {
                       type="checkbox"
                       checked={formData.certifications.includes(cert)}
                       onChange={() => handleCertificationChange(cert)}
-                      style={
+                      style={{
                         marginRight: "0.5rem",
                         cursor: "pointer",
                         width: "1rem",
@@ -1357,8 +1357,8 @@ const ProvidersPage = () => {
               </div>
             </div>
 
-            <div style={ marginBottom: "1.5rem" }>
-              <label style={
+            <div style={{ marginBottom: "1.5rem" }}>
+              <label style={{
                 display: "block",
                 fontSize: "0.875rem",
                 fontWeight: "600",
@@ -1373,7 +1373,7 @@ const ProvidersPage = () => {
                 value={formData.insurances}
                 onChange={handleInputChange}
                 placeholder="e.g., UnitedHealthcare, Aetna, Blue Cross"
-                style={
+                style={{
                   width: "100%",
                   padding: "0.75rem",
                   border: "1px solid #e0d5cc",
@@ -1384,14 +1384,14 @@ const ProvidersPage = () => {
               />
             </div>
 
-            <div style={
+            <div style={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
               gap: "1.5rem",
               marginBottom: "1.5rem"
             }>
               <div>
-                <label style={
+                <label style={{
                   display: "block",
                   fontSize: "0.875rem",
                   fontWeight: "600",
@@ -1400,34 +1400,34 @@ const ProvidersPage = () => {
                 }>
                   Accepting New Patients
                 </label>
-                <div style={ display: "flex", gap: "1rem" }>
-                  <label style={ display: "flex", alignItems: "center", cursor: "pointer" }>
+                <div style={{ display: "flex", gap: "1rem" }}>
+                  <label style={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
                     <input
                       type="radio"
                       name="acceptingNewPatients"
                       value="yes"
                       checked={formData.acceptingNewPatients === "yes"}
                       onChange={handleInputChange}
-                      style={ marginRight: "0.5rem", cursor: "pointer" }
+                      style={{ marginRight: "0.5rem", cursor: "pointer" }}
                     />
-                    <span style={ fontSize: "0.875rem" }>Yes</span>
+                    <span style={{ fontSize: "0.875rem" }}>Yes</span>
                   </label>
-                  <label style={ display: "flex", alignItems: "center", cursor: "pointer" }>
+                  <label style={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
                     <input
                       type="radio"
                       name="acceptingNewPatients"
                       value="no"
                       checked={formData.acceptingNewPatients === "no"}
                       onChange={handleInputChange}
-                      style={ marginRight: "0.5rem", cursor: "pointer" }
+                      style={{ marginRight: "0.5rem", cursor: "pointer" }}
                     />
-                    <span style={ fontSize: "0.875rem" }>No</span>
+                    <span style={{ fontSize: "0.875rem" }}>No</span>
                   </label>
                 </div>
               </div>
 
               <div>
-                <label style={
+                <label style={{
                   display: "block",
                   fontSize: "0.875rem",
                   fontWeight: "600",
@@ -1436,35 +1436,35 @@ const ProvidersPage = () => {
                 }>
                   Onsite/Backstage Available
                 </label>
-                <div style={ display: "flex", gap: "1rem" }>
-                  <label style={ display: "flex", alignItems: "center", cursor: "pointer" }>
+                <div style={{ display: "flex", gap: "1rem" }}>
+                  <label style={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
                     <input
                       type="radio"
                       name="onsiteAvailable"
                       value="yes"
                       checked={formData.onsiteAvailable === "yes"}
                       onChange={handleInputChange}
-                      style={ marginRight: "0.5rem", cursor: "pointer" }
+                      style={{ marginRight: "0.5rem", cursor: "pointer" }}
                     />
-                    <span style={ fontSize: "0.875rem" }>Yes</span>
+                    <span style={{ fontSize: "0.875rem" }}>Yes</span>
                   </label>
-                  <label style={ display: "flex", alignItems: "center", cursor: "pointer" }>
+                  <label style={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
                     <input
                       type="radio"
                       name="onsiteAvailable"
                       value="no"
                       checked={formData.onsiteAvailable === "no"}
                       onChange={handleInputChange}
-                      style={ marginRight: "0.5rem", cursor: "pointer" }
+                      style={{ marginRight: "0.5rem", cursor: "pointer" }}
                     />
-                    <span style={ fontSize: "0.875rem" }>No</span>
+                    <span style={{ fontSize: "0.875rem" }}>No</span>
                   </label>
                 </div>
               </div>
             </div>
 
-            <div style={ marginBottom: "1.5rem" }>
-              <label style={
+            <div style={{ marginBottom: "1.5rem" }}>
+              <label style={{
                 display: "block",
                 fontSize: "0.875rem",
                 fontWeight: "600",
@@ -1479,7 +1479,7 @@ const ProvidersPage = () => {
                 onChange={handleInputChange}
                 placeholder="Tell dancers about your experience and approach to care..."
                 rows="4"
-                style={
+                style={{
                   width: "100%",
                   padding: "0.75rem",
                   border: "1px solid #e0d5cc",
@@ -1492,8 +1492,8 @@ const ProvidersPage = () => {
               />
             </div>
 
-            <div style={ marginBottom: "2rem" }>
-              <label style={
+            <div style={{ marginBottom: "2rem" }}>
+              <label style={{
                 display: "block",
                 fontSize: "0.875rem",
                 fontWeight: "600",
@@ -1508,7 +1508,7 @@ const ProvidersPage = () => {
                 value={formData.website}
                 onChange={handleInputChange}
                 placeholder="https://example.com"
-                style={
+                style={{
                   width: "100%",
                   padding: "0.75rem",
                   border: "1px solid #e0d5cc",
@@ -1521,7 +1521,7 @@ const ProvidersPage = () => {
 
             <button
               type="submit"
-              style={
+              style={{
                 width: "100%",
                 padding: "1rem",
                 backgroundColor: "#9d4e6e",
@@ -1583,14 +1583,14 @@ const ContactPage = ({ setCurrentPage }) => {
   ];
 
   return (
-    <div style={ flex: "1" }>
+    <div style={{ flex: "1" }}>
       {/* HEADER */}
-      <div style={
+      <div style={{
         backgroundColor: "#f9f7f4",
         padding: "4rem 2rem",
         textAlign: "center"
       }>
-        <h1 style={
+        <h1 style={{
           fontSize: "2.5rem",
           fontFamily: "'Cormorant Garamond', serif",
           margin: "0 0 1rem 0",
@@ -1599,7 +1599,7 @@ const ContactPage = ({ setCurrentPage }) => {
         }>
           Get in Touch
         </h1>
-        <p style={
+        <p style={{
           fontSize: "1.125rem",
           color: "#666",
           margin: "0"
@@ -1608,7 +1608,7 @@ const ContactPage = ({ setCurrentPage }) => {
         </p>
       </div>
 
-      <div style={
+      <div style={{
         maxWidth: "1200px",
         margin: "0 auto",
         padding: "3rem 2rem",
@@ -1618,7 +1618,7 @@ const ContactPage = ({ setCurrentPage }) => {
       }>
         {/* CONTACT INFO */}
         <div>
-          <h2 style={
+          <h2 style={{
             fontSize: "1.5rem",
             fontFamily: "'Cormorant Garamond', serif",
             margin: "0 0 2rem 0",
@@ -1629,15 +1629,15 @@ const ContactPage = ({ setCurrentPage }) => {
           </h2>
 
           {/* CONTACT CARDS */}
-          <div style={ marginBottom: "2rem" }>
-            <div style={
+          <div style={{ marginBottom: "2rem" }}>
+            <div style={{
               backgroundColor: "#fff",
               padding: "1.5rem",
               borderRadius: "0.5rem",
               border: "1px solid #e0d5cc",
               marginBottom: "1.5rem"
             }>
-              <h4 style={
+              <h4 style={{
                 fontSize: "0.875rem",
                 fontWeight: "600",
                 color: "#100818",
@@ -1647,7 +1647,7 @@ const ContactPage = ({ setCurrentPage }) => {
               }>
                 General Inquiries
               </h4>
-              <p style={
+              <p style={{
                 margin: "0",
                 fontSize: "1rem",
                 color: "#9d4e6e",
@@ -1657,14 +1657,14 @@ const ContactPage = ({ setCurrentPage }) => {
               </p>
             </div>
 
-            <div style={
+            <div style={{
               backgroundColor: "#fff",
               padding: "1.5rem",
               borderRadius: "0.5rem",
               border: "1px solid #e0d5cc",
               marginBottom: "1.5rem"
             }>
-              <h4 style={
+              <h4 style={{
                 fontSize: "0.875rem",
                 fontWeight: "600",
                 color: "#100818",
@@ -1674,7 +1674,7 @@ const ContactPage = ({ setCurrentPage }) => {
               }>
                 Provider Relations
               </h4>
-              <p style={
+              <p style={{
                 margin: "0",
                 fontSize: "1rem",
                 color: "#9d4e6e",
@@ -1684,13 +1684,13 @@ const ContactPage = ({ setCurrentPage }) => {
               </p>
             </div>
 
-            <div style={
+            <div style={{
               backgroundColor: "#fff",
               padding: "1.5rem",
               borderRadius: "0.5rem",
               border: "1px solid #e0d5cc"
             }>
-              <h4 style={
+              <h4 style={{
                 fontSize: "0.875rem",
                 fontWeight: "600",
                 color: "#100818",
@@ -1700,7 +1700,7 @@ const ContactPage = ({ setCurrentPage }) => {
               }>
                 Press & Partnerships
               </h4>
-              <p style={
+              <p style={{
                 margin: "0",
                 fontSize: "1rem",
                 color: "#9d4e6e",
@@ -1712,14 +1712,14 @@ const ContactPage = ({ setCurrentPage }) => {
           </div>
 
           {/* CALLOUT BOX */}
-          <div style={
+          <div style={{
             backgroundColor: "#fdf2f6",
             padding: "2rem",
             borderRadius: "0.5rem",
             border: "2px solid #9d4e6e",
             marginTop: "2rem"
           }>
-            <h4 style={
+            <h4 style={{
               fontSize: "1rem",
               fontFamily: "'Cormorant Garamond', serif",
               margin: "0 0 1rem 0",
@@ -1728,7 +1728,7 @@ const ContactPage = ({ setCurrentPage }) => {
             }>
               For Dancers
             </h4>
-            <p style={
+            <p style={{
               margin: "0 0 1rem 0",
               fontSize: "0.95rem",
               color: "#666",
@@ -1738,7 +1738,7 @@ const ContactPage = ({ setCurrentPage }) => {
             </p>
             <button
               onClick={() => setCurrentPage("directory")}
-              style={
+              style={{
                 backgroundColor: "#9d4e6e",
                 color: "#fff",
                 border: "none",
@@ -1759,7 +1759,7 @@ const ContactPage = ({ setCurrentPage }) => {
 
         {/* CONTACT FORM */}
         <div>
-          <h2 style={
+          <h2 style={{
             fontSize: "1.5rem",
             fontFamily: "'Cormorant Garamond', serif",
             margin: "0 0 2rem 0",
@@ -1770,7 +1770,7 @@ const ContactPage = ({ setCurrentPage }) => {
           </h2>
 
           {contactSubmitted && (
-            <div style={
+            <div style={{
               backgroundColor: "#d4edda",
               border: "1px solid #c3e6cb",
               color: "#155724",
@@ -1784,14 +1784,14 @@ const ContactPage = ({ setCurrentPage }) => {
             </div>
           )}
 
-          <form onSubmit={handleContactSubmit} style={
+          <form onSubmit={handleContactSubmit} style={{
             backgroundColor: "#fff",
             padding: "2rem",
             borderRadius: "0.5rem",
             border: "1px solid #e0d5cc"
           }>
-            <div style={ marginBottom: "1.5rem" }>
-              <label style={
+            <div style={{ marginBottom: "1.5rem" }}>
+              <label style={{
                 display: "block",
                 fontSize: "0.875rem",
                 fontWeight: "600",
@@ -1806,7 +1806,7 @@ const ContactPage = ({ setCurrentPage }) => {
                 value={contactForm.name}
                 onChange={handleContactChange}
                 required
-                style={
+                style={{
                   width: "100%",
                   padding: "0.75rem",
                   border: "1px solid #e0d5cc",
@@ -1817,8 +1817,8 @@ const ContactPage = ({ setCurrentPage }) => {
               />
             </div>
 
-            <div style={ marginBottom: "1.5rem" }>
-              <label style={
+            <div style={{ marginBottom: "1.5rem" }}>
+              <label style={{
                 display: "block",
                 fontSize: "0.875rem",
                 fontWeight: "600",
@@ -1833,7 +1833,7 @@ const ContactPage = ({ setCurrentPage }) => {
                 value={contactForm.email}
                 onChange={handleContactChange}
                 required
-                style={
+                style={{
                   width: "100%",
                   padding: "0.75rem",
                   border: "1px solid #e0d5cc",
@@ -1844,8 +1844,8 @@ const ContactPage = ({ setCurrentPage }) => {
               />
             </div>
 
-            <div style={ marginBottom: "1.5rem" }>
-              <label style={
+            <div style={{ marginBottom: "1.5rem" }}>
+              <label style={{
                 display: "block",
                 fontSize: "0.875rem",
                 fontWeight: "600",
@@ -1859,7 +1859,7 @@ const ContactPage = ({ setCurrentPage }) => {
                 value={contactForm.subject}
                 onChange={handleContactChange}
                 required
-                style={
+                style={{
                   width: "100%",
                   padding: "0.75rem",
                   border: "1px solid #e0d5cc",
@@ -1879,8 +1879,8 @@ const ContactPage = ({ setCurrentPage }) => {
               </select>
             </div>
 
-            <div style={ marginBottom: "2rem" }>
-              <label style={
+            <div style={{ marginBottom: "2rem" }}>
+              <label style={{
                 display: "block",
                 fontSize: "0.875rem",
                 fontWeight: "600",
@@ -1895,7 +1895,7 @@ const ContactPage = ({ setCurrentPage }) => {
                 onChange={handleContactChange}
                 required
                 rows="5"
-                style={
+                style={{
                   width: "100%",
                   padding: "0.75rem",
                   border: "1px solid #e0d5cc",
@@ -1910,7 +1910,7 @@ const ContactPage = ({ setCurrentPage }) => {
 
             <button
               type="submit"
-              style={
+              style={{
                 width: "100%",
                 padding: "1rem",
                 backgroundColor: "#9d4e6e",
@@ -1954,7 +1954,7 @@ export default function App() {
   };
 
   return (
-    <div style={
+    <div style={{
       display: "flex",
       flexDirection: "column",
       minHeight: "100vh",
