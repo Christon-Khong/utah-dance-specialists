@@ -601,10 +601,10 @@ function OnsitePage() {
     e.preventDefault();
     setSubmitting(true);
     try {
-      const res = await fetch("https://formspree.io/f/mwvnjaqg", {
+      const res = await fetch("/api/onsite", {
         method: "POST",
-        headers: { "Content-Type": "application/json", "Accept": "application/json" },
-        body: JSON.stringify({ "_subject": "Onsite/Backstage Inquiry — Utah Dance Medicine", ...form }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
       });
       if (res.ok) setSubmitted(true);
     } catch (_) {}
@@ -747,29 +747,10 @@ function ProvidersPage() {
     setSubmitting(true);
     setSubmitError(false);
     try {
-      const payload = {
-        "_subject": "New Provider Application — Utah Dance Medicine",
-        "Provider Name": form.name,
-        "Credentials / Degrees": form.credentials,
-        "Practice / Clinic Name": form.practiceName,
-        "Website": form.website,
-        "Clinic Phone": form.clinicPhone,
-        "Clinic Email": form.clinicEmail,
-        "Direct Phone": form.personalPhone,
-        "Direct Email": form.personalEmail,
-        "PRIVATE — Admin Email": form.adminEmail,
-        "PRIVATE — Admin Phone": form.adminPhone,
-        "Practice Address": form.practiceAddress,
-        "Certifications": form.certifications.join(", "),
-        "Insurances Accepted": form.insurances,
-        "Accepting New Patients": form.accepting,
-        "Bio": form.bio,
-        "Onsite / Backstage Interest": form.onsiteInterest,
-      };
-      const res = await fetch("https://formspree.io/f/mwvnjaqg", {
+      const res = await fetch("/api/apply", {
         method: "POST",
-        headers: { "Content-Type": "application/json", "Accept": "application/json" },
-        body: JSON.stringify(payload),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
       });
       if (res.ok) { setSubmitted(true); }
       else { setSubmitError(true); }

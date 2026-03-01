@@ -17,10 +17,8 @@ A React single-page application serving as a public directory of dance medicine 
 - **Vite 4** — build tool (`@vitejs/plugin-react`)
 - **Inline styles throughout** — no Tailwind, no CSS files, intentional to avoid build complexity
 - **Google Fonts** — Cormorant Garamond + Inter, injected via `useEffect`
-- **Formspree** — handles form submissions (ID: `mwvnjaqg`)
-- **Vercel** — hosting with auto-deploy; `api/providers.js` runs as a serverless function
-- **Airtable** — live provider data source, replaces Google Sheets; accessed server-side via `api/providers.js`
-- **Zapier** — two zaps: (1) provider applications → Airtable Providers table, (2) onsite inquiries → Airtable Onsite Inquiries table; differentiated by Formspree `_subject` field
+- **Vercel** — hosting with auto-deploy; three serverless functions in `api/`
+- **Airtable** — live data store; accessed server-side via Vercel serverless functions (token never in client bundle)
 - **OpenStreetMap Nominatim** — free geocoding (address → lat/lng), no API key needed
 - **localStorage** — caches geocoding results so each address is only looked up once
 
@@ -31,7 +29,9 @@ A React single-page application serving as a public directory of dance medicine 
 ```
 utah-dance-specialists/
 ├── api/
-│   └── providers.js         # Vercel serverless function — proxies Airtable, returns published providers
+│   ├── providers.js         # GET — proxies Airtable, returns published providers
+│   ├── apply.js             # POST — provider application form → Airtable Providers table
+│   └── onsite.js            # POST — onsite inquiry form → Airtable Onsite Inquiries table
 ├── src/
 │   ├── App.jsx              # Entire application — all pages, components, logic
 │   └── specialists.json     # Fallback provider data (shown instantly; replaced by Airtable data)
@@ -135,58 +135,34 @@ Set both in Vercel → Project → Settings → Environment Variables (all envir
 
 ---
 
-## Forms & Formspree
+## Forms
 
-**Form ID:** `mwvnjaqg`
-**Both forms POST to:** `https://formspree.io/f/mwvnjaqg`
+Both forms submit directly to Vercel serverless functions — no Formspree, no Zapier.
 
-| Form | Page | `_subject` field |
-|---|---|---|
-| Provider application | For Providers | `New Provider Application — Utah Dance Medicine` |
-| Onsite/backstage inquiry | Onsite Services | `Onsite/Backstage Inquiry — Utah Dance Medicine` |
+| Form | Page | Endpoint | Airtable table |
+|---|---|---|---|
+| Provider application | For Providers | `POST /api/apply` | Providers |
+| Onsite/backstage inquiry | Onsite Services | `POST /api/onsite` | Onsite Inquiries |
 
-Zapier differentiates the two forms by filtering on the `_subject` field — **one Zapier zap per form type.**
+### Provider application flow
+1. Provider fills out form on `/providers` page
+2. App POSTs raw form state to `/api/apply`
+3. `api/apply.js` maps form keys → Airtable field names, sets `published: false`, `applicationDate: today`
+4. Record appears in Airtable Providers table with `published` unchecked
+5. Christon reviews, fills in `specialty`, checks `published` → provider goes live
 
-### Zap 1 — Provider application → Airtable Providers
-- **Trigger:** Formspree → New Submission
-- **Filter:** `_subject` contains `New Provider Application`
-- **Action:** Airtable → Create Record in **Providers** table
-- Field mapping:
-  - "Provider Name" → `name`
-  - "Credentials / Degrees" → `degrees`
-  - "Practice / Clinic Name" → `practiceName`
-  - "Website" → `website`
-  - "Clinic Phone" → `clinicPhone`
-  - "Clinic Email" → `clinicEmail`
-  - "Direct Phone" → `personalPhone`
-  - "Direct Email" → `personalEmail`
-  - "PRIVATE — Admin Email" → `adminEmail`
-  - "PRIVATE — Admin Phone" → `adminPhone`
-  - "Practice Address" → `address`
-  - "Certifications" → `certifications` (Zapier handles comma-separated → Multi Select)
-  - "Insurances Accepted" → `insurances`
-  - "Bio" → `bio`
-  - "Onsite / Backstage Interest" → `onsiteInterest`
-  - `applicationDate` → set to today (Zapier "current date" formatter)
-  - `published` → leave unchecked (Airtable default)
+### Onsite inquiry flow
+1. Inquiry submitted on `/onsite` page
+2. App POSTs raw form state to `/api/onsite`
+3. `api/onsite.js` maps fields, sets `status: "New"`, `submittedDate: today`
+4. Record appears in Airtable Onsite Inquiries table
 
-### Zap 2 — Onsite inquiry → Airtable Onsite Inquiries
-- **Trigger:** Formspree → New Submission
-- **Filter:** `_subject` contains `Onsite/Backstage Inquiry`
-- **Action:** Airtable → Create Record in **Onsite Inquiries** table
-- Field mapping:
-  - "Name" → `name`
-  - "Organization" → `org`
-  - "Your Role" → `role`
-  - "Email" → `email`
-  - "Phone" → `phone`
-  - "Event Type" → `eventType`
-  - "Event Date" → `eventDate`
-  - "Location" → `location`
-  - "Number of Dancers" → `dancers`
-  - "Additional Notes" / message field → `notes`
-  - `submittedDate` → set to today (Zapier "current date" formatter)
-  - `status` → set to "New" (hardcoded default)
+### Email notifications (optional)
+Set up an **Airtable Automation** (free, built-in) to email you when a new record is created:
+- Airtable → base → Automations → + New automation
+- Trigger: "When a record is created" (in Providers or Onsite Inquiries)
+- Action: "Send an email" → your email address
+- Do this for each table
 
 ---
 
@@ -213,15 +189,14 @@ Because the VM network blocks outbound git pushes, all deployments go through **
 ## Pending / Next Steps
 
 ### High priority
-- [ ] **Create Airtable base** — Use the AI prompt (see below) to build the base, then add `AIRTABLE_TOKEN` and `AIRTABLE_BASE_ID` to Vercel environment variables.
-- [ ] **Set up Zapier** — Connect Formspree → Airtable (see Zapier setup section above). Free tier is sufficient.
-- [ ] **Push current code** — Airtable migration + UI changes (specialty colors, 4 contact fields, address → Maps link, updated certifications, "Join the Directory" copy). Commit and push via GitHub Desktop.
+- [ ] **Create Airtable base** — Use the AI prompt (see CLAUDE.md Airtable section) to build both tables, then add `AIRTABLE_TOKEN` and `AIRTABLE_BASE_ID` to Vercel environment variables.
+- [ ] **Push current code** — All changes (Airtable serverless functions, specialty colors, direct form submissions, updated certifications, "Join the Directory" copy). Commit and push via GitHub Desktop.
 - [ ] **Connect custom domain** — Vercel: Settings → Domains → add `utahdancemedicine.com`.
 - [ ] **Populate Airtable with real provider data** — Replace sample rows, set `specialty`, check `published`.
+- [ ] **Set up Airtable email notifications** — Automations → "When record created" → email for both Providers and Onsite Inquiries tables.
 
 ### Medium priority
-- [ ] **Activate Formspree** — Verify form ID `mwvnjaqg` is routing to the correct email.
-- [ ] **Real provider outreach** — Use `SETUP-GUIDE.md` to recruit initial verified providers.
+- [ ] **Real provider outreach** — Recruit initial verified providers.
 
 ### Lower priority / future
 - [ ] **Individual provider pages** — URL-addressable routes (e.g. `/providers/sarah-mitchell`) for SEO.
