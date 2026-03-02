@@ -832,10 +832,11 @@ function ProvidersPage() {
     setAddressChecking(true);
     setAddressValid(null);
     try {
-      const url = "https://nominatim.openstreetmap.org/search?q=" + encodeURIComponent(addr) + "&format=json&limit=1&countrycodes=us";
+      const url = "https://nominatim.openstreetmap.org/search?q=" + encodeURIComponent(addr) + "&format=json&limit=1&countrycodes=us&addressdetails=1";
       const res = await fetch(url, { headers: { "User-Agent": "UtahDanceMedicine/1.0 (utahdancemedicine.com)" } });
       const data = await res.json();
-      setAddressValid(data.length > 0);
+      const det = data[0]?.address;
+      setAddressValid(!!(det && (det.city || det.town || det.village || det.suburb) && det.state));
     } catch { setAddressValid(null); }
     setAddressChecking(false);
   };
