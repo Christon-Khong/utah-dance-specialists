@@ -729,7 +729,7 @@ function OnsitePage() {
 
   return (
     <div style={{ background: "#f9f7f4", minHeight: "100vh" }}>
-      <div style={{ background: "linear-gradient(135deg, #100818 0%, #2a1535 100%)", padding: "80px 32px 60px", textAlign: "center" }}>
+      <div style={{ background: "linear-gradient(rgba(16,8,24,0.68), rgba(42,21,53,0.72)), url('/backstage-hero.jpg') center/cover no-repeat", padding: "80px 32px 60px", textAlign: "center" }}>
         <p style={{ fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(157,78,110,0.9)", fontWeight: 600, marginBottom: 16, fontFamily: "'Inter',sans-serif" }}>Specialized Coverage</p>
         <h1 style={{ fontFamily: "'Cormorant Garamond',Georgia,serif", fontSize: 52, fontWeight: 300, color: "#fff", margin: "0 0 20px", lineHeight: 1.2 }}>Onsite & Backstage<br /><em>Services</em></h1>
         <p style={{ fontSize: 17, color: "rgba(255,255,255,0.6)", maxWidth: 560, margin: "0 auto", lineHeight: 1.8, fontWeight: 300, fontFamily: "'Inter',sans-serif" }}>
