@@ -36,7 +36,10 @@ export default async function handler(req, res) {
     cityOnly:          b.cityOnly === true,
     // certifications is already an array in form state → Airtable Multi Select
     certifications:    Array.isArray(b.certifications) ? b.certifications : [],
-    insurances:        b.insurances      || "",
+    certificationsOther: b.certificationsOther || "",
+    // insurances is now an array → Airtable Multi Select
+    insurances:        Array.isArray(b.insurances) ? b.insurances : [],
+    insurancesOther:   b.insurancesOther  || "",
     // accepting: "yes" | "waitlist" | "no" → Airtable Checkbox
     acceptingPatients: b.accepting === "yes",
     bio:               b.bio             || "",

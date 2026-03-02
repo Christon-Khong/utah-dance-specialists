@@ -825,7 +825,9 @@ function ProvidersPage() {
     practiceAddress: "",
     cityOnly: false,
     certifications: [],
-    insurances: "",
+    certificationsOther: "",
+    insurances: [],
+    insurancesOther: "",
     accepting: "",        // "yes" | "waitlist" | "no"
     // Profile
     bio: "",
@@ -851,6 +853,20 @@ function ProvidersPage() {
 
   const certOptions = ["Dry Needling", "Pilates", "Pelvic Health", "Schroth", "Strength & Conditioning", "Gyrotonics", "Personal Trainer", "Other"];
   const toggleCert = (cert) => setForm((f) => ({ ...f, certifications: f.certifications.includes(cert) ? f.certifications.filter((c) => c !== cert) : [...f.certifications, cert] }));
+
+  const [insuranceOptions, setInsuranceOptions] = useState([]);
+  const [insuranceSearch, setInsuranceSearch] = useState("");
+  useEffect(() => {
+    fetch("/api/providers")
+      .then((r) => r.ok ? r.json() : null)
+      .then((data) => {
+        if (!data?.providers) return;
+        const opts = [...new Set(data.providers.flatMap((p) => p.insurances || []))].sort();
+        setInsuranceOptions(opts);
+      })
+      .catch(() => {});
+  }, []);
+  const toggleInsurance = (ins) => setForm((f) => ({ ...f, insurances: f.insurances.includes(ins) ? f.insurances.filter((i) => i !== ins) : [...f.insurances, ins] }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -995,11 +1011,42 @@ function ProvidersPage() {
                       </label>
                     ))}
                   </div>
+                  {form.certifications.includes("Other") && (
+                    <textarea
+                      value={form.certificationsOther}
+                      onChange={(e) => setForm((f) => ({ ...f, certificationsOther: e.target.value }))}
+                      placeholder="Please describe the certification(s) you hold that aren't listed above — we'll get them added."
+                      style={{ ...inputStyle, marginTop: 10, resize: "vertical", minHeight: 80 }}
+                    />
+                  )}
                 </div>
                 <div>
                   <label style={labelStyle}>Insurances Accepted *</label>
-                  <input required value={form.insurances} onChange={(e) => setForm((f) => ({ ...f, insurances: e.target.value }))} style={inputStyle} placeholder="e.g. SelectHealth, Blue Cross, Aetna, Medicaid" />
-                  <p style={{ fontSize: 11, color: "#aaa", marginTop: 6, fontFamily: "'Inter',sans-serif" }}>Separate multiple insurances with commas. Write "Cash pay only" if you don't accept insurance.</p>
+                  <input
+                    value={insuranceSearch}
+                    onChange={(e) => setInsuranceSearch(e.target.value)}
+                    style={{ ...inputStyle, marginBottom: 10 }}
+                    placeholder="Search insurances…"
+                  />
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                    {[...insuranceOptions, "Other"]
+                      .filter((opt) => !insuranceSearch || opt.toLowerCase().includes(insuranceSearch.toLowerCase()))
+                      .map((ins) => (
+                        <label key={ins} style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "7px 14px", borderRadius: 99, border: "1.5px solid " + (form.insurances.includes(ins) ? "#9d4e6e" : "#ddd"), background: form.insurances.includes(ins) ? "#fce8f1" : "#fff", cursor: "pointer", fontSize: 13, color: form.insurances.includes(ins) ? "#7a2d4f" : "#555", fontFamily: "'Inter',sans-serif" }}>
+                          <input type="checkbox" checked={form.insurances.includes(ins)} onChange={() => toggleInsurance(ins)} style={{ display: "none" }} />
+                          {ins}
+                        </label>
+                      ))}
+                  </div>
+                  {form.insurances.includes("Other") && (
+                    <textarea
+                      value={form.insurancesOther}
+                      onChange={(e) => setForm((f) => ({ ...f, insurancesOther: e.target.value }))}
+                      placeholder="Please list the insurance(s) you accept that aren't listed above — we'll get them added."
+                      style={{ ...inputStyle, marginTop: 10, resize: "vertical", minHeight: 80 }}
+                    />
+                  )}
+                  <p style={{ fontSize: 11, color: "#aaa", marginTop: 8, fontFamily: "'Inter',sans-serif" }}>Select all that apply. Don't see yours? Choose Other and describe it.</p>
                 </div>
                 <div>
                   <label style={labelStyle}>Accepting New Patients? *</label>
