@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import specialistsData from "./specialists.json";
 import dancerIcon from "./Images/Dancer Icon.png";
 import verifiedIcon from "./Images/Verified Icon.png";
@@ -1188,24 +1188,42 @@ function ContactPage({ onNav }) {
 }
 
 // ─── ROOT APP ─────────────────────────────────────────────────────────────────
+const VALID_PAGES = ["directory", "about", "onsite", "providers", "contact"];
+function pathToPage(pathname) {
+  const segment = pathname.replace(/^\//, "").split("/")[0];
+  return VALID_PAGES.includes(segment) ? segment : "directory";
+}
+
 export default function App() {
   useFonts();
-  const [page, setPage] = useState("directory");
+  const [page, setPage] = useState(() => pathToPage(window.location.pathname));
   useSEO(page);
 
+  const navigate = useCallback((p) => {
+    const path = p === "directory" ? "/" : "/" + p;
+    window.history.pushState({}, "", path);
+    setPage(p);
+  }, []);
+
+  useEffect(() => {
+    const handler = () => setPage(pathToPage(window.location.pathname));
+    window.addEventListener("popstate", handler);
+    return () => window.removeEventListener("popstate", handler);
+  }, []);
+
   const pages = {
-    directory: <DirectoryPage onNav={setPage} />,
-    about: <AboutPage onNav={setPage} />,
+    directory: <DirectoryPage onNav={navigate} />,
+    about: <AboutPage onNav={navigate} />,
     onsite: <OnsitePage />,
     providers: <ProvidersPage />,
-    contact: <ContactPage onNav={setPage} />,
+    contact: <ContactPage onNav={navigate} />,
   };
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "#f9f7f4" }}>
-      <Nav current={page} onNav={setPage} />
+      <Nav current={page} onNav={navigate} />
       <main style={{ flex: 1 }}>{pages[page]}</main>
-      <Footer onNav={setPage} />
+      <Footer onNav={navigate} />
     </div>
   );
 }
