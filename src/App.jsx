@@ -606,9 +606,7 @@ function DirectoryPage({ onNav }) {
 function AboutPage({ onNav }) {
   const [stats, setStats] = useState([
     { number: "—", label: "Verified Specialists" },
-    { number: "—", label: "Cities Covered" },
     { number: "—", label: "Insurances Accepted" },
-    { number: "Statewide", label: "Utah Coverage" },
   ]);
 
   useEffect(() => {
@@ -617,17 +615,10 @@ function AboutPage({ onNav }) {
       .then((data) => {
         if (!data || !Array.isArray(data.providers)) return;
         const providers = data.providers;
-        const cities = new Set(
-          providers
-            .map((p) => { const m = (p.address || "").match(/([^,]+),\s*[A-Z]{2}/); return m ? m[1].trim() : null; })
-            .filter(Boolean)
-        );
         const insurances = new Set(providers.flatMap((p) => p.insurances || []));
         setStats([
           { number: String(providers.length), label: "Verified Specialists" },
-          { number: String(cities.size), label: "Cities Covered" },
           { number: insurances.size + "+", label: "Insurances Accepted" },
-          { number: "Statewide", label: "Utah Coverage" },
         ]);
       })
       .catch(() => {});
@@ -663,7 +654,7 @@ function AboutPage({ onNav }) {
         <div style={{ maxWidth: 1100, margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 24, textAlign: "center" }}>
           {stats.map((stat) => (
             <div key={stat.label}>
-              <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 48, fontWeight: 300, color: "#fff", lineHeight: 1 }}>{stat.number}</div>
+              <div style={{ fontFamily: "'Josefin Sans',sans-serif", fontSize: 48, fontWeight: 300, color: "#fff", lineHeight: 1 }}>{stat.number}</div>
               <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", marginTop: 8, letterSpacing: "0.12em", textTransform: "uppercase", fontFamily: "'Inter',sans-serif" }}>{stat.label}</div>
             </div>
           ))}
