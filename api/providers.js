@@ -56,6 +56,7 @@ export default async function handler(req, res) {
         bio:     f.bio     || "",
         website: f.website || null,
         address: f.address || "",
+        cityOnly: f.cityOnly === true,
         // lat/lng not stored in Airtable — geocoded client-side from address via Nominatim
         lat: null,
         lng: null,

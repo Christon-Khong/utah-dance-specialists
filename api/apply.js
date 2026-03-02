@@ -33,6 +33,7 @@ export default async function handler(req, res) {
     adminEmail:        b.adminEmail      || "",
     adminPhone:        b.adminPhone      || "",
     address:           b.practiceAddress || "",
+    cityOnly:          b.cityOnly === true,
     // certifications is already an array in form state → Airtable Multi Select
     certifications:    Array.isArray(b.certifications) ? b.certifications : [],
     insurances:        b.insurances      || "",

@@ -266,6 +266,9 @@ function Dropdown({ label, icon, options, selected, onChange }) {
 // ─── SPECIALIST CARD ──────────────────────────────────────────────────────────
 function SpecialistCard({ s, distance }) {
   const [open, setOpen] = useState(false);
+  const cityMatch = s.cityOnly && s.address ? s.address.match(/([^,]+),\s*[A-Z]{2}/) : null;
+  const displayAddress = cityMatch ? cityMatch[1].trim() : s.address;
+  const mapsQuery = cityMatch ? cityMatch[1].trim() + ", Utah" : s.address;
   return (
     <div
       style={{ background: "#fff", borderRadius: 20, border: "1px solid " + s.borderColor, boxShadow: "0 4px 24px rgba(0,0,0,0.06)", overflow: "hidden", display: "flex", flexDirection: "column", transition: "box-shadow 0.25s, transform 0.25s", fontFamily: "'Inter',sans-serif" }}
@@ -304,7 +307,7 @@ function SpecialistCard({ s, distance }) {
         {s.address && (
           <div style={{ display: "flex", gap: 10, alignItems: "flex-start", fontSize: 13, color: "#555", lineHeight: 1.5 }}>
             <span style={{ flexShrink: 0 }}>📍</span>
-            <a href={"https://maps.google.com/maps?q=" + encodeURIComponent(s.address)} target="_blank" rel="noopener noreferrer" style={{ color: "#555", textDecoration: "none" }}>{s.address}</a>
+            <a href={"https://maps.google.com/maps?q=" + encodeURIComponent(mapsQuery)} target="_blank" rel="noopener noreferrer" style={{ color: "#555", textDecoration: "none" }}>{displayAddress}</a>
           </div>
         )}
         {s.clinicPhone   && <div style={{ display: "flex", gap: 10, fontSize: 13, color: "#555" }}><span>📞</span><span>{s.clinicPhone}</span></div>}
@@ -810,6 +813,7 @@ function ProvidersPage() {
     adminPhone: "",
     // Practice details
     practiceAddress: "",
+    cityOnly: false,
     certifications: [],
     insurances: "",
     accepting: "",        // "yes" | "waitlist" | "no"
@@ -821,12 +825,27 @@ function ProvidersPage() {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(false);
+  const [addressValid, setAddressValid] = useState(null); // null = unchecked, true = valid, false = invalid
+  const [addressChecking, setAddressChecking] = useState(false);
+
+  const validateAddress = async (addr) => {
+    setAddressChecking(true);
+    setAddressValid(null);
+    try {
+      const url = "https://nominatim.openstreetmap.org/search?q=" + encodeURIComponent(addr) + "&format=json&limit=1&countrycodes=us";
+      const res = await fetch(url, { headers: { "User-Agent": "UtahDanceMedicine/1.0 (utahdancemedicine.com)" } });
+      const data = await res.json();
+      setAddressValid(data.length > 0);
+    } catch { setAddressValid(null); }
+    setAddressChecking(false);
+  };
 
   const certOptions = ["Dry Needling", "Pilates", "Pelvic Health", "Schroth", "Strength & Conditioning", "Gyrotonics", "Personal Trainer", "Other"];
   const toggleCert = (cert) => setForm((f) => ({ ...f, certifications: f.certifications.includes(cert) ? f.certifications.filter((c) => c !== cert) : [...f.certifications, cert] }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (addressValid === false) return;
     setSubmitting(true);
     setSubmitError(false);
     try {
@@ -935,8 +954,27 @@ function ProvidersPage() {
               <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
                 <div>
                   <label style={labelStyle}>Practice Address *</label>
-                  <input required value={form.practiceAddress} onChange={(e) => setForm((f) => ({ ...f, practiceAddress: e.target.value }))} style={inputStyle} placeholder="123 Main St, Salt Lake City, UT 84101" />
-                  <p style={{ fontSize: 11, color: "#aaa", marginTop: 6, fontFamily: "'Inter',sans-serif" }}>Used to show your location on the map and enable radius search for patients.</p>
+                  <input
+                    required
+                    value={form.practiceAddress}
+                    onChange={(e) => { setForm((f) => ({ ...f, practiceAddress: e.target.value })); setAddressValid(null); }}
+                    onBlur={(e) => { if (e.target.value.trim()) validateAddress(e.target.value.trim()); }}
+                    style={{ ...inputStyle, borderColor: addressValid === false ? "#c0392b" : addressValid === true ? "#27ae60" : "#e0dbd6" }}
+                    placeholder="123 Main St, Salt Lake City, UT 84101"
+                  />
+                  {addressChecking && <p style={{ fontSize: 11, color: "#888", marginTop: 6, fontFamily: "'Inter',sans-serif" }}>Verifying address…</p>}
+                  {!addressChecking && addressValid === true  && <p style={{ fontSize: 11, color: "#27ae60", marginTop: 6, fontFamily: "'Inter',sans-serif" }}>✓ Address verified</p>}
+                  {!addressChecking && addressValid === false && <p style={{ fontSize: 11, color: "#c0392b", marginTop: 6, fontFamily: "'Inter',sans-serif" }}>Address not found — please check for typos or try a nearby intersection.</p>}
+                  {!addressChecking && addressValid === null  && <p style={{ fontSize: 11, color: "#aaa", marginTop: 6, fontFamily: "'Inter',sans-serif" }}>Used to show your location on the map and enable radius search for patients.</p>}
+                  <label style={{ display: "inline-flex", alignItems: "center", gap: 8, marginTop: 10, cursor: "pointer" }}>
+                    <input
+                      type="checkbox"
+                      checked={form.cityOnly}
+                      onChange={(e) => setForm((f) => ({ ...f, cityOnly: e.target.checked }))}
+                      style={{ width: 15, height: 15, accentColor: "#9d4e6e", cursor: "pointer" }}
+                    />
+                    <span style={{ fontSize: 13, color: "#555", fontFamily: "'Inter',sans-serif" }}>Display city only — keep full address private (e.g. home-based practice)</span>
+                  </label>
                 </div>
                 <div>
                   <label style={labelStyle}>Certifications</label>
