@@ -6,18 +6,24 @@
 
 const BASELINE_INSURANCES = [
   "Aetna",
-  "Blue Cross Blue Shield (Regence)",
+  "Blue Cross Blue Shield",
+  "Cash Based",
   "Cigna",
+  "Desert Mutual Benefit Administration (DMBA)",
+  "Health Choice Utah",
   "Humana",
   "Medicaid (Utah)",
   "Medicare",
-  "Molina Healthcare",
+  "Medicare Advantage",
+  "Molina",
   "PEHP (Public Employees Health Program)",
+  "Regence BlueCross BlueShield",
   "SelectHealth",
-  "SilverScript",
-  "Tricare",
-  "UnitedHealthcare",
-  "University of Utah Health Plans",
+  "SelectHealth Advantage Medicare",
+  "TRICARE",
+  "United Healthcare",
+  "University of Utah Health Plan",
+  "Other",
 ];
 
 export default async function handler(req, res) {
