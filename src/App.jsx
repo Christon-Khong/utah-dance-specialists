@@ -167,8 +167,8 @@ function Nav({ current, onNav }) {
   return (
     <nav style={{ position: "sticky", top: 0, zIndex: 100, background: "rgba(16,8,24,0.97)", backdropFilter: "blur(8px)", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 24px", display: "flex", justifyContent: "space-between", alignItems: "center", height: 60 }}>
-        <button onClick={() => handleNav("directory")} style={{ background: "none", border: "none", cursor: "pointer", color: "#fff", fontSize: 13, letterSpacing: "0.18em", textTransform: "uppercase", fontWeight: 500, fontFamily: "'Inter',sans-serif" }}>
-          utahdancemedicine.com
+        <button onClick={() => handleNav("directory")} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 13, letterSpacing: "0.18em", textTransform: "uppercase", fontWeight: 600, fontFamily: "'Josefin Sans',sans-serif" }}>
+          <span style={{ color: "#fff" }}>utah</span><span style={{ color: "#c9819e" }}>dance</span><span style={{ color: "#fff" }}>medicine</span><span style={{ color: "#c9819e" }}>.com</span>
         </button>
         {isMobile ? (
           <button onClick={() => setMenuOpen((o) => !o)} aria-label="Menu" style={{ background: "none", border: "none", cursor: "pointer", color: "#fff", fontSize: 20, lineHeight: 1, padding: "4px 6px", fontFamily: "sans-serif" }}>
@@ -462,7 +462,7 @@ function DirectoryPage({ onNav }) {
         <img src={HERO_IMAGE} alt="Ballet dancers performing in a Utah dance studio with red rock views" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 30%" }} />
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(15,8,25,0.45) 0%, rgba(15,8,25,0.65) 55%, rgba(15,8,25,0.90) 100%)" }} />
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "0 48px 52px" }}>
-          <div style={{ fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(255,255,255,0.55)", fontWeight: 500, marginBottom: 14 }}>Utah's Premier Resource</div>
+          <div style={{ fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(255,255,255,0.55)", fontWeight: 500, marginBottom: 14 }}>Utah's Premier Resource For</div>
           <h1 style={{ margin: "0 0 16px", fontFamily: "'Cormorant Garamond',Georgia,serif", fontSize: 56, fontWeight: 300, color: "#fff", lineHeight: 1.1, letterSpacing: "-0.5px" }}>
             Dance Medicine<br />
             <em>Specialists</em>
