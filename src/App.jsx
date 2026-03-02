@@ -325,7 +325,7 @@ function SpecialistCard({ s, distance }) {
           </button>
           {open && (
             <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid " + s.borderColor }}>
-              <p style={{ fontSize: 13.5, color: "#555", lineHeight: 1.75, margin: 0, fontStyle: "italic" }}>{s.bio}</p>
+              <p style={{ fontSize: 13.5, color: "#555", lineHeight: 1.75, margin: 0, fontStyle: "italic", whiteSpace: "pre-wrap" }}>{s.bio}</p>
               {s.website && (
                 <a href={s.website} target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: 6, marginTop: 14, fontSize: 12, fontWeight: 600, color: s.color, textDecoration: "none", letterSpacing: "0.05em", textTransform: "uppercase" }}>
                   🌐 Website →
@@ -832,10 +832,9 @@ function ProvidersPage() {
     setAddressChecking(true);
     setAddressValid(null);
     try {
-      const url = "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?address=" + encodeURIComponent(addr) + "&benchmark=Public_AR_Current&format=json";
-      const res = await fetch(url);
+      const res = await fetch("/api/validate-address?address=" + encodeURIComponent(addr));
       const data = await res.json();
-      setAddressValid(data?.result?.addressMatches?.length > 0);
+      setAddressValid(data.valid);
     } catch { setAddressValid(null); }
     setAddressChecking(false);
   };
