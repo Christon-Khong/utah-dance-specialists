@@ -857,12 +857,10 @@ function ProvidersPage() {
   const [insuranceOptions, setInsuranceOptions] = useState([]);
   const [insuranceSearch, setInsuranceSearch] = useState("");
   useEffect(() => {
-    fetch("/api/providers")
+    fetch("/api/insurance-options")
       .then((r) => r.ok ? r.json() : null)
       .then((data) => {
-        if (!data?.providers) return;
-        const opts = [...new Set(data.providers.flatMap((p) => p.insurances || []))].sort();
-        setInsuranceOptions(opts);
+        if (data?.options) setInsuranceOptions(data.options);
       })
       .catch(() => {});
   }, []);
