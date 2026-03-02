@@ -320,14 +320,29 @@ function SpecialistCard({ s, distance }) {
             <a href={"https://maps.google.com/maps?q=" + encodeURIComponent(mapsQuery)} target="_blank" rel="noopener noreferrer" style={{ color: "#555", textDecoration: "none" }}>{displayAddress}</a>
           </div>
         )}
-        {s.clinicPhone   && <div style={{ display: "flex", gap: 10, fontSize: 13, color: "#555" }}><span>📞</span><a href={"tel:" + s.clinicPhone.replace(/\D/g,"")} style={{ color: "#555", textDecoration: "none" }}>{formatPhone(s.clinicPhone)}</a></div>}
-        {s.clinicEmail   && <div style={{ display: "flex", gap: 10, fontSize: 13, color: "#555" }}><span>✉️</span><a href={"mailto:" + s.clinicEmail} style={{ color: "#555", textDecoration: "none" }}>{s.clinicEmail}</a></div>}
-        {s.personalPhone && <div style={{ display: "flex", gap: 10, fontSize: 13, color: "#555" }}><span>📞</span><a href={"tel:" + s.personalPhone.replace(/\D/g,"")} style={{ color: "#555", textDecoration: "none" }}>{formatPhone(s.personalPhone)}</a></div>}
-        {s.personalEmail && <div style={{ display: "flex", gap: 10, fontSize: 13, color: "#555" }}><span>✉️</span><a href={"mailto:" + s.personalEmail} style={{ color: "#555", textDecoration: "none" }}>{s.personalEmail}</a></div>}
+        {(s.clinicPhone || s.clinicEmail) && (
+          <div style={{ background: "#faf9f8", border: "1px solid #ede9e4", borderRadius: 8, padding: "10px 12px", display: "flex", flexDirection: "column", gap: 6 }}>
+            <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "#9d4e6e", marginBottom: 2, fontFamily: "'Inter',sans-serif" }}>Clinic</span>
+            {s.clinicPhone && <div style={{ display: "flex", gap: 8, fontSize: 13, color: "#555" }}><span>📞</span><a href={"tel:" + s.clinicPhone.replace(/\D/g,"")} style={{ color: "#555", textDecoration: "none" }}>{formatPhone(s.clinicPhone)}</a></div>}
+            {s.clinicEmail && <div style={{ display: "flex", gap: 8, fontSize: 13, color: "#555" }}><span>✉️</span><a href={"mailto:" + s.clinicEmail} style={{ color: "#555", textDecoration: "none" }}>{s.clinicEmail}</a></div>}
+          </div>
+        )}
+        {(s.personalPhone || s.personalEmail) && (
+          <div style={{ background: "#faf9f8", border: "1px solid #ede9e4", borderRadius: 8, padding: "10px 12px", display: "flex", flexDirection: "column", gap: 6 }}>
+            <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "#555", marginBottom: 2, fontFamily: "'Inter',sans-serif" }}>Direct</span>
+            {s.personalPhone && <div style={{ display: "flex", gap: 8, fontSize: 13, color: "#555" }}><span>📞</span><a href={"tel:" + s.personalPhone.replace(/\D/g,"")} style={{ color: "#555", textDecoration: "none" }}>{formatPhone(s.personalPhone)}</a></div>}
+            {s.personalEmail && <div style={{ display: "flex", gap: 8, fontSize: 13, color: "#555" }}><span>✉️</span><a href={"mailto:" + s.personalEmail} style={{ color: "#555", textDecoration: "none" }}>{s.personalEmail}</a></div>}
+          </div>
+        )}
         <div style={{ display: "flex", gap: 10, alignItems: "flex-start", fontSize: 13, color: "#555", lineHeight: 1.5 }}>
           <span style={{ flexShrink: 0 }}>🛡️</span>
           <span>{s.insurances.join(", ")}</span>
         </div>
+        {s.website && (
+          <a href={s.website} target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 600, color: s.color, textDecoration: "none", letterSpacing: "0.05em", textTransform: "uppercase" }}>
+            🌐 Website →
+          </a>
+        )}
         <div style={{ marginTop: 4 }}>
           <button onClick={() => setOpen((o) => !o)} style={{ background: "none", border: "none", padding: 0, cursor: "pointer", fontSize: 12, fontWeight: 600, color: s.color, letterSpacing: "0.06em", textTransform: "uppercase", display: "flex", alignItems: "center", gap: 6, fontFamily: "'Inter',sans-serif" }}>
             <span style={{ fontSize: 10 }}>{open ? "▲" : "▼"}</span>
@@ -336,11 +351,6 @@ function SpecialistCard({ s, distance }) {
           {open && (
             <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid " + s.borderColor }}>
               <p style={{ fontSize: 13.5, color: "#555", lineHeight: 1.75, margin: 0, fontStyle: "italic", whiteSpace: "pre-wrap" }}>{s.bio}</p>
-              {s.website && (
-                <a href={s.website} target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: 6, marginTop: 14, fontSize: 12, fontWeight: 600, color: s.color, textDecoration: "none", letterSpacing: "0.05em", textTransform: "uppercase" }}>
-                  🌐 Website →
-                </a>
-              )}
             </div>
           )}
         </div>
@@ -1026,15 +1036,22 @@ function ProvidersPage() {
                     style={{ ...inputStyle, marginBottom: 10 }}
                     placeholder="Search insurances…"
                   />
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                    {[...insuranceOptions, "Other"]
-                      .filter((opt) => !insuranceSearch || opt.toLowerCase().includes(insuranceSearch.toLowerCase()))
-                      .map((ins) => (
-                        <label key={ins} style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "7px 14px", borderRadius: 99, border: "1.5px solid " + (form.insurances.includes(ins) ? "#9d4e6e" : "#ddd"), background: form.insurances.includes(ins) ? "#fce8f1" : "#fff", cursor: "pointer", fontSize: 13, color: form.insurances.includes(ins) ? "#7a2d4f" : "#555", fontFamily: "'Inter',sans-serif" }}>
-                          <input type="checkbox" checked={form.insurances.includes(ins)} onChange={() => toggleInsurance(ins)} style={{ display: "none" }} />
-                          {ins}
-                        </label>
-                      ))}
+                  <div style={{ border: "1.5px solid #e0dbd6", borderRadius: 10, overflow: "hidden" }}>
+                    <div style={{ maxHeight: 220, overflowY: "auto" }}>
+                      {[...insuranceOptions, "Other"]
+                        .filter((opt) => !insuranceSearch || opt.toLowerCase().includes(insuranceSearch.toLowerCase()))
+                        .map((ins, idx, arr) => (
+                          <label key={ins} style={{ display: "flex", alignItems: "center", gap: 10, padding: "9px 14px", cursor: "pointer", fontSize: 13, color: form.insurances.includes(ins) ? "#7a2d4f" : "#444", background: form.insurances.includes(ins) ? "#fce8f1" : "transparent", borderBottom: idx < arr.length - 1 ? "1px solid #f0ede9" : "none", fontFamily: "'Inter',sans-serif", userSelect: "none" }}>
+                            <input type="checkbox" checked={form.insurances.includes(ins)} onChange={() => toggleInsurance(ins)} style={{ accentColor: "#9d4e6e", width: 15, height: 15, flexShrink: 0 }} />
+                            {ins}
+                          </label>
+                        ))}
+                    </div>
+                    {form.insurances.filter((i) => i !== "Other").length > 0 && (
+                      <div style={{ padding: "7px 14px", borderTop: "1.5px solid #e0dbd6", background: "#faf9f8", fontSize: 11, color: "#9d4e6e", fontWeight: 600, fontFamily: "'Inter',sans-serif" }}>
+                        {form.insurances.filter((i) => i !== "Other").length} selected
+                      </div>
+                    )}
                   </div>
                   {form.insurances.includes("Other") && (
                     <textarea
