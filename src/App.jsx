@@ -1,5 +1,9 @@
 import { useState, useMemo, useEffect } from "react";
 import specialistsData from "./specialists.json";
+import dancerIcon from "./Images/Dancer Icon.png";
+import verifiedIcon from "./Images/Verified Icon.png";
+import utahIcon from "./Images/Utah Icon.png";
+import aboutHero from "./Images/PT treating dancer.png";
 
 const SITE_URL = "https://utahdancemedicine.com";
 const SITE_NAME = "Utah Dance Medicine";
@@ -333,9 +337,21 @@ function SpecialistCard({ s, distance }) {
 }
 
 /// ─── PAGE: DIRECTORY ──────────────────────────────────────────────────────────
+const LOADING_PHRASES = [
+  "Warming up the directory…",
+  "Spotting the best specialists…",
+  "Stretching across Utah…",
+  "En pointe and searching…",
+  "Plié-ing through profiles…",
+  "Finding your perfect match…",
+  "Grand jeté-ing into the data…",
+  "Turnout. Turnout. Almost there…",
+];
+
 function DirectoryPage({ onNav }) {
-  // Start with local JSON (instant), then fetch Google Sheets + geocode in background
-  const [specialists, setSpecialists] = useState(() => applyPalette(specialistsData));
+  const [specialists, setSpecialists] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [phraseIdx, setPhraseIdx] = useState(() => Math.floor(Math.random() * LOADING_PHRASES.length));
 
   useEffect(() => {
     async function load() {
@@ -356,6 +372,7 @@ function DirectoryPage({ onNav }) {
         !p.lat && p.address && cache[p.address] ? { ...p, ...cache[p.address] } : p
       );
       setSpecialists(withCached);
+      setLoading(false);
       // Geocode remaining addresses in background, updating cards as each resolves
       await geocodeAll(withCached, (id, coords) => {
         setSpecialists((prev) => prev.map((p) => p.id === id ? { ...p, ...coords } : p));
@@ -363,6 +380,12 @@ function DirectoryPage({ onNav }) {
     }
     load();
   }, []);
+
+  useEffect(() => {
+    if (!loading) return;
+    const id = setInterval(() => setPhraseIdx((i) => (i + 1) % LOADING_PHRASES.length), 2500);
+    return () => clearInterval(id);
+  }, [loading]);
 
   const allCertifications = useMemo(() => [...new Set(specialists.flatMap((s) => s.certifications))].sort(), [specialists]);
   const allInsurances = useMemo(() => [...new Set(specialists.flatMap((s) => s.insurances))].sort(), [specialists]);
@@ -532,34 +555,47 @@ function DirectoryPage({ onNav }) {
 
       {/* Grid */}
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: "40px 32px 80px" }}>
-        <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 28 }}>
-          <div>
-            <h2 style={{ margin: 0, fontFamily: "'Cormorant Garamond',Georgia,serif", fontSize: 30, fontWeight: 400, color: "#1a1a1a" }}>Specialist Directory</h2>
-            <p style={{ margin: "4px 0 0", fontSize: 13, color: "#aaa" }}>
-              {filtered.length} specialist{filtered.length !== 1 ? "s" : ""} found
-              {userLat ? " within " + radius + " miles of " + locLabel : " in Utah"}
-            </p>
-          </div>
-          <button onClick={() => onNav("providers")} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 12, fontWeight: 600, color: "#9d4e6e", fontFamily: "'Inter',sans-serif", letterSpacing: "0.08em", textTransform: "uppercase" }}>
-            Join the Directory →
-          </button>
-        </div>
-        {filtered.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "80px 0" }}>
-            <div style={{ fontSize: 48, marginBottom: 16, opacity: 0.3 }}>🩰</div>
-            <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 22, color: "#888", fontStyle: "italic" }}>No specialists found</div>
-            <p style={{ fontSize: 13, color: "#bbb", marginTop: 8, fontFamily: "'Inter',sans-serif" }}>
-              {userLat ? "Try increasing the radius or clearing your location filter." : "Try adjusting your filters."}
-            </p>
-            <button onClick={clearAll} style={{ marginTop: 12, background: "none", border: "none", cursor: "pointer", fontSize: 13, color: "#9d4e6e", fontFamily: "'Inter',sans-serif" }}>Clear all filters</button>
+        {loading ? (
+          <div style={{ textAlign: "center", padding: "100px 0" }}>
+            <div style={{ fontFamily: "'Cormorant Garamond',Georgia,serif", fontSize: 34, fontWeight: 300, color: "#9d4e6e", fontStyle: "italic", marginBottom: 16, transition: "opacity 0.4s" }}>
+              {LOADING_PHRASES[phraseIdx]}
+            </div>
+            <div style={{ fontSize: 11, color: "#ccc", fontFamily: "'Inter',sans-serif", letterSpacing: "0.14em", textTransform: "uppercase" }}>
+              Pulling together Utah's dance medicine specialists
+            </div>
           </div>
         ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(380px,1fr))", gap: 22 }}>
-            {filtered.map((s) => {
-              const dist = userLat && s.lat ? haversine(userLat, userLng, s.lat, s.lng) : undefined;
-              return <SpecialistCard key={s.id} s={s} distance={dist} />;
-            })}
-          </div>
+          <>
+            <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 28 }}>
+              <div>
+                <h2 style={{ margin: 0, fontFamily: "'Cormorant Garamond',Georgia,serif", fontSize: 30, fontWeight: 400, color: "#1a1a1a" }}>Specialist Directory</h2>
+                <p style={{ margin: "4px 0 0", fontSize: 13, color: "#aaa" }}>
+                  {filtered.length} specialist{filtered.length !== 1 ? "s" : ""} found
+                  {userLat ? " within " + radius + " miles of " + locLabel : " in Utah"}
+                </p>
+              </div>
+              <button onClick={() => onNav("providers")} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 12, fontWeight: 600, color: "#9d4e6e", fontFamily: "'Inter',sans-serif", letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                Join the Directory →
+              </button>
+            </div>
+            {filtered.length === 0 ? (
+              <div style={{ textAlign: "center", padding: "80px 0" }}>
+                <div style={{ fontSize: 48, marginBottom: 16, opacity: 0.3 }}>🩰</div>
+                <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 22, color: "#888", fontStyle: "italic" }}>No specialists found</div>
+                <p style={{ fontSize: 13, color: "#bbb", marginTop: 8, fontFamily: "'Inter',sans-serif" }}>
+                  {userLat ? "Try increasing the radius or clearing your location filter." : "Try adjusting your filters."}
+                </p>
+                <button onClick={clearAll} style={{ marginTop: 12, background: "none", border: "none", cursor: "pointer", fontSize: 13, color: "#9d4e6e", fontFamily: "'Inter',sans-serif" }}>Clear all filters</button>
+              </div>
+            ) : (
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(380px,1fr))", gap: 22 }}>
+                {filtered.map((s) => {
+                  const dist = userLat && s.lat ? haversine(userLat, userLng, s.lat, s.lng) : undefined;
+                  return <SpecialistCard key={s.id} s={s} distance={dist} />;
+                })}
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
@@ -568,29 +604,55 @@ function DirectoryPage({ onNav }) {
 
 // ─── PAGE: ABOUT ──────────────────────────────────────────────────────────────
 function AboutPage({ onNav }) {
-  const stats = [
-    { number: "6+", label: "Verified Specialists" },
-    { number: "5", label: "Cities Covered" },
-    { number: "10+", label: "Insurances Accepted" },
+  const [stats, setStats] = useState([
+    { number: "—", label: "Verified Specialists" },
+    { number: "—", label: "Cities Covered" },
+    { number: "—", label: "Insurances Accepted" },
     { number: "Statewide", label: "Utah Coverage" },
-  ];
+  ]);
+
+  useEffect(() => {
+    fetch("/api/providers")
+      .then((r) => r.ok ? r.json() : null)
+      .then((data) => {
+        if (!data || !Array.isArray(data.providers)) return;
+        const providers = data.providers;
+        const cities = new Set(
+          providers
+            .map((p) => { const m = (p.address || "").match(/([^,]+),\s*[A-Z]{2}/); return m ? m[1].trim() : null; })
+            .filter(Boolean)
+        );
+        const insurances = new Set(providers.flatMap((p) => p.insurances || []));
+        setStats([
+          { number: String(providers.length), label: "Verified Specialists" },
+          { number: String(cities.size), label: "Cities Covered" },
+          { number: insurances.size + "+", label: "Insurances Accepted" },
+          { number: "Statewide", label: "Utah Coverage" },
+        ]);
+      })
+      .catch(() => {});
+  }, []);
   const pillars = [
-    { icon: "🩰", title: "Built for Dancers", desc: "Designed around how dancers actually seek care — by certification, location, insurance, and whether a provider understands the specific demands of their art form." },
-    { icon: "✅", title: "Verified Specialists", desc: "Every provider is reviewed for dance-relevant training and experience before being listed. This is a curated directory, not an open registry." },
-    { icon: "📍", title: "Utah-Focused", desc: "Serving dancers from St. George to Logan, with an emphasis on underserved areas outside Salt Lake City where access to specialized care has historically been limited." },
+    { img: dancerIcon, title: "Built for Dancers", desc: "Designed around how dancers actually seek care — by certification, location, insurance, and whether a provider understands the specific demands of their art form." },
+    { img: verifiedIcon, title: "Verified Specialists", desc: "Every provider is reviewed for dance-relevant training and experience before being listed. This is a curated directory, not an open registry." },
+    { img: utahIcon, title: "Utah-Focused", desc: "Serving dancers from St. George to Logan, with an emphasis on underserved areas outside Salt Lake City where access to specialized care has historically been limited." },
   ];
   return (
     <div style={{ background: "#f9f7f4", minHeight: "100vh" }}>
-      <div style={{ background: "linear-gradient(135deg, #fdf2f6 0%, #f4f2fb 100%)", padding: "80px 32px 60px", textAlign: "center" }}>
-        <p style={{ fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "#9d4e6e", fontWeight: 600, marginBottom: 16, fontFamily: "'Inter',sans-serif" }}>Our Mission</p>
-        <h1 style={{ fontFamily: "'Cormorant Garamond',Georgia,serif", fontSize: 52, fontWeight: 300, color: "#1a1a1a", margin: "0 0 20px", lineHeight: 1.2 }}>Where Dance<br /><em>Meets Medicine</em></h1>
-        <p style={{ fontSize: 17, color: "#666", maxWidth: 560, margin: "0 auto", lineHeight: 1.8, fontWeight: 300, fontFamily: "'Inter',sans-serif" }}>Utah's dedicated resource connecting dancers with practitioners who truly understand the demands of the art.</p>
+      <div style={{ position: "relative", height: 480, overflow: "hidden" }}>
+        <img src={aboutHero} alt="Physical therapist treating a dancer" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }} />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(15,8,25,0.35) 0%, rgba(15,8,25,0.60) 55%, rgba(15,8,25,0.88) 100%)" }} />
+        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "0 48px 52px", textAlign: "center" }}>
+          <p style={{ fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(255,255,255,0.6)", fontWeight: 600, marginBottom: 16, fontFamily: "'Inter',sans-serif" }}>Our Mission</p>
+          <h1 style={{ fontFamily: "'Cormorant Garamond',Georgia,serif", fontSize: 52, fontWeight: 300, color: "#fff", margin: "0 0 20px", lineHeight: 1.2 }}>Where Dance<br /><em>Meets Medicine</em></h1>
+          <p style={{ fontSize: 17, color: "rgba(255,255,255,0.72)", maxWidth: 560, margin: "0 auto", lineHeight: 1.8, fontWeight: 300, fontFamily: "'Inter',sans-serif" }}>Utah's dedicated resource connecting dancers with practitioners who truly understand the demands of the art.</p>
+        </div>
       </div>
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: "60px 32px" }}>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: 24 }}>
           {pillars.map((p) => (
             <div key={p.title} style={{ background: "#fff", borderRadius: 20, padding: "32px 28px", boxShadow: "0 4px 24px rgba(0,0,0,0.05)", border: "1px solid #ede8e4" }}>
-              <div style={{ fontSize: 36, marginBottom: 16 }}>{p.icon}</div>
+              <div style={{ marginBottom: 16 }}><img src={p.img} alt={p.title} style={{ width: "2.25rem", height: "2.25rem", objectFit: "contain" }} /></div>
               <h3 style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 24, fontWeight: 400, color: "#1a1a1a", margin: "0 0 12px" }}>{p.title}</h3>
               <p style={{ fontSize: 14, color: "#666", lineHeight: 1.75, margin: 0, fontFamily: "'Inter',sans-serif" }}>{p.desc}</p>
             </div>
