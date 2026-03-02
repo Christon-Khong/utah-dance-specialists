@@ -263,6 +263,16 @@ function Dropdown({ label, icon, options, selected, onChange }) {
   );
 }
 
+// ─── HELPERS ──────────────────────────────────────────────────────────────────
+function formatPhone(raw) {
+  const digits = (raw || "").replace(/\D/g, "");
+  if (digits.length === 11 && digits[0] === "1")
+    return `+1 (${digits.slice(1,4)}) ${digits.slice(4,7)}-${digits.slice(7)}`;
+  if (digits.length === 10)
+    return `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`;
+  return raw; // return as-is if not a standard US number
+}
+
 // ─── SPECIALIST CARD ──────────────────────────────────────────────────────────
 function SpecialistCard({ s, distance }) {
   const [open, setOpen] = useState(false);
@@ -310,10 +320,10 @@ function SpecialistCard({ s, distance }) {
             <a href={"https://maps.google.com/maps?q=" + encodeURIComponent(mapsQuery)} target="_blank" rel="noopener noreferrer" style={{ color: "#555", textDecoration: "none" }}>{displayAddress}</a>
           </div>
         )}
-        {s.clinicPhone   && <div style={{ display: "flex", gap: 10, fontSize: 13, color: "#555" }}><span>📞</span><span>{s.clinicPhone}</span></div>}
-        {s.clinicEmail   && <div style={{ display: "flex", gap: 10, fontSize: 13, color: "#555" }}><span>✉️</span><span>{s.clinicEmail}</span></div>}
-        {s.personalPhone && <div style={{ display: "flex", gap: 10, fontSize: 13, color: "#555" }}><span>📞</span><span>{s.personalPhone}</span></div>}
-        {s.personalEmail && <div style={{ display: "flex", gap: 10, fontSize: 13, color: "#555" }}><span>✉️</span><span>{s.personalEmail}</span></div>}
+        {s.clinicPhone   && <div style={{ display: "flex", gap: 10, fontSize: 13, color: "#555" }}><span>📞</span><a href={"tel:" + s.clinicPhone.replace(/\D/g,"")} style={{ color: "#555", textDecoration: "none" }}>{formatPhone(s.clinicPhone)}</a></div>}
+        {s.clinicEmail   && <div style={{ display: "flex", gap: 10, fontSize: 13, color: "#555" }}><span>✉️</span><a href={"mailto:" + s.clinicEmail} style={{ color: "#555", textDecoration: "none" }}>{s.clinicEmail}</a></div>}
+        {s.personalPhone && <div style={{ display: "flex", gap: 10, fontSize: 13, color: "#555" }}><span>📞</span><a href={"tel:" + s.personalPhone.replace(/\D/g,"")} style={{ color: "#555", textDecoration: "none" }}>{formatPhone(s.personalPhone)}</a></div>}
+        {s.personalEmail && <div style={{ display: "flex", gap: 10, fontSize: 13, color: "#555" }}><span>✉️</span><a href={"mailto:" + s.personalEmail} style={{ color: "#555", textDecoration: "none" }}>{s.personalEmail}</a></div>}
         <div style={{ display: "flex", gap: 10, alignItems: "flex-start", fontSize: 13, color: "#555", lineHeight: 1.5 }}>
           <span style={{ flexShrink: 0 }}>🛡️</span>
           <span>{s.insurances.join(", ")}</span>
