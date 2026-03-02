@@ -523,6 +523,13 @@ function DirectoryPage({ onNav }) {
         </div>
       </div>
 
+      {/* Insurance disclaimer */}
+      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "12px 32px 0" }}>
+        <p style={{ fontSize: 11, color: "#bbb", fontStyle: "italic", margin: 0, fontFamily: "'Inter',sans-serif" }}>
+          * Insurance coverage varies. Always verify your benefits directly with your individual insurance policy before booking.
+        </p>
+      </div>
+
       {/* Grid */}
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: "40px 32px 80px" }}>
         <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 28 }}>
