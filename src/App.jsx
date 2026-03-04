@@ -7,6 +7,7 @@ import aboutHero from "./Images/PT treating dancer.png";
 import workshopIcon from "./Images/Workshop.png";
 import trophyIcon from "./Images/Trophy.png";
 import companyIcon from "./Images/Company.png";
+import controlIcon from "./Images/Control.png";
 
 const SITE_URL = "https://utahdancemedicine.com";
 const SITE_NAME = "Utah Dance Medicine";
@@ -912,9 +913,9 @@ function ProvidersPage() {
   const dividerStyle = { height: 1, background: "#ece8e4", margin: "8px 0 24px" };
 
   const benefits = [
-    { icon: "👥", title: "Reach Dancers Directly", desc: "Be found by Utah dancers actively searching for specialists who understand their needs — filtered by certification, location, and insurance." },
-    { icon: "✅", title: "Build Your Reputation", desc: "A listing on Utah Dance Medicine signals to the community that you have sought out training relevant to dancer care." },
-    { icon: "📊", title: "Stay in Control", desc: "Update your availability, accepting status, and profile details at any time. Your profile reflects your practice as it actually is." },
+    { icon: dancerIcon, title: "Reach Dancers Directly", desc: "Be found by Utah dancers actively searching for specialists who understand their needs — filtered by certification, location, and insurance." },
+    { icon: verifiedIcon, title: "Build Your Reputation", desc: "A listing on Utah Dance Medicine signals to the community that you have sought out training relevant to dancer care." },
+    { icon: controlIcon, title: "Stay in Control", desc: "Update your availability, accepting status, and profile details at any time. Your profile reflects your practice as it actually is." },
   ];
 
   return (
@@ -928,7 +929,7 @@ function ProvidersPage() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: 24 }}>
           {benefits.map((b) => (
             <div key={b.title} style={{ background: "#fff", borderRadius: 20, padding: "32px 28px", boxShadow: "0 4px 24px rgba(0,0,0,0.05)", border: "1px solid #ede8e4" }}>
-              <div style={{ fontSize: 36, marginBottom: 16 }}>{b.icon}</div>
+              <img src={b.icon} alt={b.title} style={{ width: 40, height: 40, marginBottom: 16, objectFit: "contain" }} />
               <h3 style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 22, fontWeight: 400, color: "#1a1a1a", margin: "0 0 10px" }}>{b.title}</h3>
               <p style={{ fontSize: 14, color: "#666", lineHeight: 1.75, margin: 0, fontFamily: "'Inter',sans-serif" }}>{b.desc}</p>
             </div>
