@@ -649,7 +649,7 @@ function AboutPage({ onNav }) {
   const pillars = [
     { img: dancerIcon, title: "Built for Dancers", desc: "Designed around how dancers actually seek care — by certification, location, insurance, and whether a provider understands the specific demands of their art form." },
     { img: verifiedIcon, title: "Verified Specialists", desc: "Every provider is reviewed for dance-relevant training and experience before being listed. This is a curated directory, not an open registry." },
-    { img: utahIcon, title: "Utah-Focused", desc: "Serving dancers from St. George to Logan, with an emphasis on underserved areas outside Salt Lake City where access to specialized care has historically been limited." },
+    { img: utahIcon, title: "Utah-Focused", desc: "Utah is home to incredible dance talent, yet many dancers still aren't connected with the specialized care they need. Dance medicine providers are here — and by focusing on Utah we make it easy to find nearby care, keep our directory current, and strengthen the local dance medicine community." },
   ];
   return (
     <div style={{ background: "#f9f7f4", minHeight: "100vh" }}>
