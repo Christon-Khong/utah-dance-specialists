@@ -1161,9 +1161,9 @@ function ContactPage({ onNav }) {
   const inputStyle = { width: "100%", padding: "12px 16px", borderRadius: 10, border: "1.5px solid #e0dbd6", fontSize: 14, fontFamily: "'Inter',sans-serif", color: "#222", background: "#faf9f8", outline: "none", boxSizing: "border-box" };
   const labelStyle = { display: "block", fontSize: 12, fontWeight: 600, color: "#555", marginBottom: 6, letterSpacing: "0.06em", textTransform: "uppercase", fontFamily: "'Inter',sans-serif" };
   const contactCards = [
-    { icon: "✉️", title: "General Inquiries", value: "info@utahdancemedicine.com" },
-    { icon: "🏥", title: "Provider Relations", value: "providers@utahdancemedicine.com" },
-    { icon: "📢", title: "Press & Partnerships", value: "press@utahdancemedicine.com" },
+    { title: "General Inquiries", value: "info@utahdancemedicine.com" },
+    { title: "Provider Relations", value: "providers@utahdancemedicine.com" },
+    { title: "Press & Partnerships", value: "press@utahdancemedicine.com" },
   ];
   return (
     <div style={{ background: "#f9f7f4", minHeight: "100vh" }}>
@@ -1177,14 +1177,12 @@ function ContactPage({ onNav }) {
           <div style={{ display: "flex", flexDirection: "column", gap: 16, marginBottom: 24 }}>
             {contactCards.map((card) => (
               <div key={card.title} style={{ background: "#fff", borderRadius: 16, padding: "24px", boxShadow: "0 4px 20px rgba(0,0,0,0.05)", border: "1px solid #ede8e4" }}>
-                <div style={{ fontSize: 24, marginBottom: 10 }}>{card.icon}</div>
                 <div style={{ fontSize: 12, fontWeight: 600, color: "#999", letterSpacing: "0.08em", textTransform: "uppercase", fontFamily: "'Inter',sans-serif", marginBottom: 4 }}>{card.title}</div>
                 <div style={{ fontSize: 14, color: "#333", fontFamily: "'Inter',sans-serif", wordBreak: "break-word" }}>{card.value}</div>
               </div>
             ))}
           </div>
           <div style={{ background: "linear-gradient(135deg,#fdf2f6,#f4f2fb)", borderRadius: 16, padding: "24px", border: "1px solid #e8c0da" }}>
-            <div style={{ fontSize: 20, marginBottom: 10 }}>🩰</div>
             <p style={{ fontSize: 13, color: "#555", lineHeight: 1.7, margin: "0 0 16px", fontFamily: "'Inter',sans-serif" }}>Looking for a specialist? Use our directory to find practitioners near you.</p>
             <button onClick={() => onNav("directory")} style={{ padding: "10px 20px", borderRadius: 50, background: "#9d4e6e", border: "none", color: "#fff", fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "'Inter',sans-serif", letterSpacing: "0.06em", textTransform: "uppercase" }}>Search Directory →</button>
           </div>
@@ -1192,7 +1190,6 @@ function ContactPage({ onNav }) {
         <div style={{ background: "#fff", borderRadius: 20, padding: "40px", boxShadow: "0 4px 24px rgba(0,0,0,0.06)", border: "1px solid #ede8e4" }}>
           {submitted ? (
             <div style={{ textAlign: "center", padding: "40px 20px" }}>
-              <div style={{ fontSize: 48, marginBottom: 16 }}>✅</div>
               <h3 style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 28, fontWeight: 400, color: "#1a1a1a", marginBottom: 12 }}>Message Sent</h3>
               <p style={{ fontSize: 14, color: "#666", fontFamily: "'Inter',sans-serif", lineHeight: 1.7 }}>Thanks for reaching out. We'll get back to you within 2 business days.</p>
             </div>
