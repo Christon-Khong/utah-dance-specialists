@@ -4,6 +4,9 @@ import dancerIcon from "./Images/Dancer Icon.png";
 import verifiedIcon from "./Images/Verified Icon.png";
 import utahIcon from "./Images/Utah Icon.png";
 import aboutHero from "./Images/PT treating dancer.png";
+import workshopIcon from "./Images/Workshop.png";
+import trophyIcon from "./Images/Trophy.png";
+import companyIcon from "./Images/Company.png";
 
 const SITE_URL = "https://utahdancemedicine.com";
 const SITE_NAME = "Utah Dance Medicine";
@@ -726,10 +729,10 @@ function OnsitePage() {
   const labelStyle = { display: "block", fontSize: 12, fontWeight: 600, color: "#555", marginBottom: 6, letterSpacing: "0.06em", textTransform: "uppercase", fontFamily: "'Inter',sans-serif" };
 
   const services = [
-    { icon: "🎭", title: "Performances & Productions", desc: "Medical coverage for ballet, contemporary, and theatrical performances. On-call practitioners for injury response, taping, and pre-show assessments." },
-    { icon: "🏫", title: "Intensives & Workshops", desc: "Coverage for summer intensives, masterclasses, and multi-day workshops where dancers are training at elevated volumes and injury risk is higher." },
-    { icon: "🏆", title: "Competitions", desc: "Backstage medical support for dance competitions, ensuring athletes have access to qualified care throughout the event." },
-    { icon: "🏢", title: "Company Residencies", desc: "Embedded practitioner arrangements for dance companies seeking consistent, relationship-based sports medicine support throughout the season." },
+    { icon: dancerIcon, title: "Performances & Productions", desc: "Medical coverage for ballet, contemporary, and theatrical performances. On-call practitioners for injury response, taping, and pre-show assessments." },
+    { icon: workshopIcon, title: "Intensives & Workshops", desc: "Coverage for summer intensives, masterclasses, and multi-day workshops where dancers are training at elevated volumes and injury risk is higher." },
+    { icon: trophyIcon, title: "Competitions", desc: "Backstage medical support for dance competitions, ensuring athletes have access to qualified care throughout the event." },
+    { icon: companyIcon, title: "Company Residencies", desc: "Embedded practitioner arrangements for dance companies seeking consistent, relationship-based sports medicine support throughout the season." },
   ];
 
   return (
@@ -762,7 +765,7 @@ function OnsitePage() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))", gap: 20 }}>
             {services.map((svc) => (
               <div key={svc.title} style={{ borderRadius: 16, padding: "28px 24px", border: "1px solid #ede8e4", background: "#faf9f8" }}>
-                <div style={{ fontSize: 32, marginBottom: 12 }}>{svc.icon}</div>
+                <img src={svc.icon} alt={svc.title} style={{ width: 40, height: 40, marginBottom: 12, objectFit: "contain" }} />
                 <h3 style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 20, fontWeight: 400, color: "#1a1a1a", margin: "0 0 8px" }}>{svc.title}</h3>
                 <p style={{ fontSize: 13, color: "#666", lineHeight: 1.7, margin: 0, fontFamily: "'Inter',sans-serif" }}>{svc.desc}</p>
               </div>
