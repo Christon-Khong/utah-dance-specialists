@@ -1190,6 +1190,7 @@ function ContactPage({ onNav }) {
         <div style={{ background: "#fff", borderRadius: 20, padding: "40px", boxShadow: "0 4px 24px rgba(0,0,0,0.06)", border: "1px solid #ede8e4" }}>
           {submitted ? (
             <div style={{ textAlign: "center", padding: "40px 20px" }}>
+              <div style={{ fontSize: 48, marginBottom: 16 }}>✅</div>
               <h3 style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 28, fontWeight: 400, color: "#1a1a1a", marginBottom: 12 }}>Message Sent</h3>
               <p style={{ fontSize: 14, color: "#666", fontFamily: "'Inter',sans-serif", lineHeight: 1.7 }}>Thanks for reaching out. We'll get back to you within 2 business days.</p>
             </div>
