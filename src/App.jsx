@@ -843,6 +843,11 @@ function ProvidersPage() {
     bio: "",
     // Onsite interest
     onsiteInterest: "",   // "yes" | "no" | "maybe"
+    // Background (private)
+    isDancer: false,
+    trainedInDance: false,
+    wasReferred: false,
+    referredBy: "",
   });
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -977,6 +982,28 @@ function ProvidersPage() {
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                 <div><label style={labelStyle}>Your Email *</label><input required type="email" value={form.adminEmail} onChange={(e) => setForm((f) => ({ ...f, adminEmail: e.target.value }))} style={inputStyle} placeholder="your personal email" /></div>
                 <div><label style={labelStyle}>Your Phone *</label><input required value={form.adminPhone} onChange={(e) => setForm((f) => ({ ...f, adminPhone: e.target.value }))} style={inputStyle} placeholder="(801) 555-0100" /></div>
+              </div>
+              <div style={{ marginTop: 20 }}>
+                <label style={labelStyle}>Background</label>
+                <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 8 }}>
+                  <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
+                    <input type="checkbox" checked={form.isDancer} onChange={(e) => setForm((f) => ({ ...f, isDancer: e.target.checked }))} style={{ width: 15, height: 15, accentColor: "#5a4a8a", cursor: "pointer" }} />
+                    <span style={{ fontSize: 13, color: "#555", fontFamily: "'Inter',sans-serif" }}>I am / was a dancer</span>
+                  </label>
+                  <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
+                    <input type="checkbox" checked={form.trainedInDance} onChange={(e) => setForm((f) => ({ ...f, trainedInDance: e.target.checked }))} style={{ width: 15, height: 15, accentColor: "#5a4a8a", cursor: "pointer" }} />
+                    <span style={{ fontSize: 13, color: "#555", fontFamily: "'Inter',sans-serif" }}>I am trained and experienced in treating dancers</span>
+                  </label>
+                  <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
+                    <input type="checkbox" checked={form.wasReferred} onChange={(e) => setForm((f) => ({ ...f, wasReferred: e.target.checked, referredBy: e.target.checked ? f.referredBy : "" }))} style={{ width: 15, height: 15, accentColor: "#5a4a8a", cursor: "pointer" }} />
+                    <span style={{ fontSize: 13, color: "#555", fontFamily: "'Inter',sans-serif" }}>I was referred by another provider</span>
+                  </label>
+                  {form.wasReferred && (
+                    <div style={{ marginLeft: 23 }}>
+                      <input value={form.referredBy} onChange={(e) => setForm((f) => ({ ...f, referredBy: e.target.value }))} style={{ ...inputStyle, maxWidth: 320 }} placeholder="Who referred you?" />
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -1135,14 +1162,15 @@ function ContactPage({ onNav }) {
         <p style={{ fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "#2d7a6e", fontWeight: 600, marginBottom: 16, fontFamily: "'Inter',sans-serif" }}>We'd Love to Hear From You</p>
         <h1 style={{ fontFamily: "'Cormorant Garamond',Georgia,serif", fontSize: 52, fontWeight: 300, color: "#1a1a1a", margin: "0 0 20px", lineHeight: 1.2 }}>Get in<br /><em>Touch</em></h1>
       </div>
-      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "60px 32px 80px", display: "grid", gridTemplateColumns: "1fr 1.6fr", gap: 48, alignItems: "start" }}>
+      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "60px 32px 80px", display: "grid", gridTemplateColumns: "1fr 1.6fr", gap: 48, alignItems: "start" }} className="contact-grid">
+        <style>{`@media(max-width:767px){.contact-grid{grid-template-columns:1fr!important;gap:32px!important}.contact-form-row{grid-template-columns:1fr!important}}`}</style>
         <div>
           <div style={{ display: "flex", flexDirection: "column", gap: 16, marginBottom: 24 }}>
             {contactCards.map((card) => (
               <div key={card.title} style={{ background: "#fff", borderRadius: 16, padding: "24px", boxShadow: "0 4px 20px rgba(0,0,0,0.05)", border: "1px solid #ede8e4" }}>
                 <div style={{ fontSize: 24, marginBottom: 10 }}>{card.icon}</div>
                 <div style={{ fontSize: 12, fontWeight: 600, color: "#999", letterSpacing: "0.08em", textTransform: "uppercase", fontFamily: "'Inter',sans-serif", marginBottom: 4 }}>{card.title}</div>
-                <div style={{ fontSize: 14, color: "#333", fontFamily: "'Inter',sans-serif" }}>{card.value}</div>
+                <div style={{ fontSize: 14, color: "#333", fontFamily: "'Inter',sans-serif", wordBreak: "break-word" }}>{card.value}</div>
               </div>
             ))}
           </div>
@@ -1162,7 +1190,7 @@ function ContactPage({ onNav }) {
           ) : (
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
               <h2 style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 30, fontWeight: 400, color: "#1a1a1a", margin: "0 0 8px" }}>Send a Message</h2>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+              <div className="contact-form-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                 <div><label style={labelStyle}>Name *</label><input required value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} style={inputStyle} placeholder="Your name" /></div>
                 <div><label style={labelStyle}>Email *</label><input required type="email" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} style={inputStyle} placeholder="you@example.com" /></div>
               </div>

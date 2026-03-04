@@ -7,7 +7,7 @@
 const BASELINE_INSURANCES = [
   "Aetna",
   "Blue Cross Blue Shield",
-  "Cash Based",
+  "Cash Pay",
   "Cigna",
   "Desert Mutual Benefit Administration (DMBA)",
   "Health Choice Utah",

@@ -45,6 +45,11 @@ export default async function handler(req, res) {
     bio:               b.bio             || "",
     // Airtable Single Select options are capitalized: Yes, No, Maybe
     onsiteInterest:    { yes: "Yes", no: "No", maybe: "Maybe" }[b.onsiteInterest] || "",
+    // Background (private)
+    isDancer:          b.isDancer === true,
+    trainedInDance:    b.trainedInDance === true,
+    wasReferred:       b.wasReferred === true,
+    referredBy:        b.referredBy || "",
     applicationDate:   new Date().toISOString().split("T")[0],
     published:         false,
   };
