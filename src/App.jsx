@@ -111,6 +111,11 @@ function haversine(lat1, lng1, lat2, lng2) {
   return R * 2 * Math.asin(Math.sqrt(a));
 }
 
+function isSafeUrl(url) {
+  try { const u = new URL(url); return u.protocol === "http:" || u.protocol === "https:"; }
+  catch { return false; }
+}
+
 // ─── SEO HOOK ────────────────────────────────────────────────────────────────
 function useSEO(page) {
   useEffect(() => {
@@ -338,7 +343,7 @@ function SpecialistCard({ s, distance }) {
           <span style={{ flexShrink: 0 }}>🛡️</span>
           <span>{s.insurances.join(", ")}</span>
         </div>
-        {s.website && (
+        {s.website && isSafeUrl(s.website) && (
           <a href={s.website} target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 600, color: s.color, textDecoration: "none", letterSpacing: "0.05em", textTransform: "uppercase" }}>
             🌐 Website →
           </a>

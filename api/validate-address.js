@@ -10,7 +10,7 @@
 export default async function handler(req, res) {
   const { address } = req.query;
 
-  if (!address) {
+  if (!address || typeof address !== "string" || address.length > 500) {
     return res.status(400).json({ valid: false });
   }
 

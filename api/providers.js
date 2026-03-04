@@ -23,8 +23,7 @@ export default async function handler(req, res) {
     });
 
     if (!airtableRes.ok) {
-      const text = await airtableRes.text();
-      return res.status(502).json({ error: "Airtable request failed", detail: text });
+      return res.status(502).json({ error: "Service temporarily unavailable" });
     }
 
     const { records } = await airtableRes.json();
@@ -67,6 +66,6 @@ export default async function handler(req, res) {
     res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate=60");
     return res.status(200).json({ providers });
   } catch (err) {
-    return res.status(500).json({ error: "Internal error", detail: err.message });
+    return res.status(500).json({ error: "Internal error" });
   }
 }

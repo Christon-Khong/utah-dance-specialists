@@ -6,6 +6,15 @@
 //   AIRTABLE_TOKEN    — Personal Access Token
 //   AIRTABLE_BASE_ID  — Base ID, starts with "app..."
 
+function str(val, max = 500) {
+  if (typeof val !== "string") return "";
+  return val.trim().slice(0, max);
+}
+
+function isEmail(val) {
+  return typeof val === "string" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -15,28 +24,47 @@ export default async function handler(req, res) {
   const baseId = process.env.AIRTABLE_BASE_ID;
 
   if (!token || !baseId) {
-    return res.status(500).json({ error: "Airtable env vars not configured" });
+    return res.status(500).json({ error: "Server configuration error" });
   }
 
   const b = req.body;
+  if (!b || typeof b !== "object") {
+    return res.status(400).json({ error: "Invalid request body" });
+  }
+
+  // --- Validate required fields ---
+  const name  = str(b.name, 200);
+  const email = str(b.email, 200);
+
+  if (!name || !email) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+  if (!isEmail(email)) {
+    return res.status(400).json({ error: "Invalid email address" });
+  }
 
   // Form state keys match Airtable field names directly
   const fields = {
-    name:          b.name      || "",
-    org:           b.org       || "",
-    role:          b.role      || "",
-    email:         b.email     || "",
-    phone:         b.phone     || "",
-    eventType:     b.eventType || "",
-    eventDate:     b.eventDate || "",
-    location:      b.location  || "",
-    notes:         b.notes     || "",
+    name,
+    org:           str(b.org, 200),
+    role:          str(b.role, 200),
+    email,
+    phone:         str(b.phone, 30),
+    eventType:     str(b.eventType, 200),
+    eventDate:     str(b.eventDate, 30),
+    location:      str(b.location, 500),
+    notes:         str(b.notes, 5000),
     submittedDate: new Date().toISOString().split("T")[0],
     status:        "New",
   };
 
-  // dancers is a Number field in Airtable — only include if provided
-  if (b.dancers) fields.dancers = Number(b.dancers);
+  // dancers is a Number field in Airtable — validate bounds
+  if (b.dancers) {
+    const dancers = parseInt(b.dancers, 10);
+    if (!isNaN(dancers) && dancers > 0 && dancers <= 10000) {
+      fields.dancers = dancers;
+    }
+  }
 
   // Remove empty strings so Airtable doesn't reject optional fields
   Object.keys(fields).forEach((k) => {
@@ -57,12 +85,11 @@ export default async function handler(req, res) {
     });
 
     if (!airtableRes.ok) {
-      const text = await airtableRes.text();
-      return res.status(502).json({ error: "Airtable request failed", detail: text });
+      return res.status(502).json({ error: "Failed to submit inquiry" });
     }
 
     return res.status(200).json({ success: true });
   } catch (err) {
-    return res.status(500).json({ error: "Internal error", detail: err.message });
+    return res.status(500).json({ error: "Internal error" });
   }
 }
