@@ -421,11 +421,17 @@ function DirectoryPage({ onNav }) {
 
   const allCertifications = useMemo(() => [...new Set(specialists.flatMap((s) => s.certifications))].sort(), [specialists]);
   const allInsurances = useMemo(() => [...new Set(specialists.flatMap((s) => s.insurances))].sort(), [specialists]);
+  const allSpecialties = useMemo(() => {
+    const fromData = [...new Set(specialists.flatMap((s) => Array.isArray(s.specialty) ? s.specialty : s.specialty ? [s.specialty] : []))];
+    const canonical = ["PT", "MD", "DO", "Athletic Trainer", "Surgeon", "Pilates Instructor", "Personal Trainer", "Gyrotonics"];
+    return [...new Set([...canonical, ...fromData])].sort();
+  }, [specialists]);
 
   // Text / dropdown filters
   const [query, setQuery] = useState("");
   const [certs, setCerts] = useState([]);
   const [insurance, setInsurance] = useState([]);
+  const [specialty, setSpecialty] = useState([]);
   const [acceptingOnly, setAcceptingOnly] = useState(false);
 
   // Location / radius filters
@@ -462,8 +468,8 @@ function DirectoryPage({ onNav }) {
   };
 
   const clearLocation = () => { setUserLat(null); setUserLng(null); setLocLabel(""); setZipInput(""); };
-  const hasFilters = query || certs.length > 0 || insurance.length > 0 || acceptingOnly || userLat;
-  const clearAll = () => { setQuery(""); setCerts([]); setInsurance([]); setAcceptingOnly(false); clearLocation(); };
+  const hasFilters = query || certs.length > 0 || insurance.length > 0 || specialty.length > 0 || acceptingOnly || userLat;
+  const clearAll = () => { setQuery(""); setCerts([]); setInsurance([]); setSpecialty([]); setAcceptingOnly(false); clearLocation(); };
 
   const filtered = useMemo(() => {
     const q = query.toLowerCase();
@@ -471,9 +477,11 @@ function DirectoryPage({ onNav }) {
       const matchQ = !q || s.name.toLowerCase().includes(q) || s.certifications.some((c) => c.toLowerCase().includes(q)) || (s.address && s.address.toLowerCase().includes(q));
       const matchC = certs.length === 0 || certs.some((c) => s.certifications.includes(c));
       const matchI = insurance.length === 0 || insurance.some((i) => s.insurances.includes(i));
+      const sSpecialties = Array.isArray(s.specialty) ? s.specialty : s.specialty ? [s.specialty] : [];
+      const matchS = specialty.length === 0 || specialty.some((sp) => sSpecialties.includes(sp));
       const matchAccepting = !acceptingOnly || s.acceptingPatients;
       const matchLoc = !userLat || !s.lat || haversine(userLat, userLng, s.lat, s.lng) <= radius;
-      return matchQ && matchC && matchI && matchAccepting && matchLoc;
+      return matchQ && matchC && matchI && matchS && matchAccepting && matchLoc;
     });
     if (userLat) {
       result = [...result].sort((a, b) => {
@@ -522,7 +530,8 @@ function DirectoryPage({ onNav }) {
             )}
           </div>
 
-          {/* Certification & Insurance dropdowns */}
+          {/* Specialty, Certification & Insurance dropdowns */}
+          <Dropdown label="Specialty" icon="🩺" options={allSpecialties} selected={specialty} onChange={setSpecialty} />
           <Dropdown label="Certification" icon="⭐" options={allCertifications} selected={certs} onChange={setCerts} />
           <Dropdown label="Insurance" icon="🛡️" options={allInsurances} selected={insurance} onChange={setInsurance} />
 
@@ -659,6 +668,7 @@ function AboutPage({ onNav }) {
     { img: dancerIcon, title: "Built for Dancers", desc: "Designed around how dancers actually seek care — by certification, location, insurance, and whether a provider understands the specific demands of their art form." },
     { img: verifiedIcon, title: "Verified Specialists", desc: "Every provider is reviewed for dance-relevant training and experience before being listed. This is a curated directory, not an open registry." },
     { img: utahIcon, title: "Utah-Focused", desc: "Utah is home to incredible dance talent, yet many dancers still aren't connected with the specialized care they need. Dance medicine providers are here — and by focusing on Utah we make it easy to find nearby care, keep our directory current, and strengthen the local dance medicine community." },
+    { img: dancerIcon, title: "Always Free", desc: "In order to build a comprehensive and up-to-date directory, all parts of this website are always free — for both dancers and providers. Our only goal is to make dance medicine in Utah easily accessible and sought after." },
   ];
   return (
     <div style={{ background: "#f9f7f4", minHeight: "100vh" }}>
@@ -730,10 +740,10 @@ function OnsitePage() {
   const labelStyle = { display: "block", fontSize: 12, fontWeight: 600, color: "#555", marginBottom: 6, letterSpacing: "0.06em", textTransform: "uppercase", fontFamily: "'Inter',sans-serif" };
 
   const services = [
-    { icon: dancerIcon, title: "Performances & Productions", desc: "Medical coverage for ballet, contemporary, and theatrical performances. On-call practitioners for injury response, taping, and pre-show assessments." },
+    { icon: dancerIcon, title: "Performances & Productions", desc: "Onsite coverage for your show and rehearsals. On-call practitioners for injury prevention and response, manual treatments, and pre-show assessments." },
     { icon: workshopIcon, title: "Intensives & Workshops", desc: "Coverage for summer intensives, masterclasses, and multi-day workshops where dancers are training at elevated volumes and injury risk is higher." },
-    { icon: trophyIcon, title: "Competitions", desc: "Backstage medical support for dance competitions, ensuring athletes have access to qualified care throughout the event." },
-    { icon: companyIcon, title: "Company Residencies", desc: "Embedded practitioner arrangements for dance companies seeking consistent, relationship-based sports medicine support throughout the season." },
+    { icon: trophyIcon, title: "Competitions & Conventions", desc: "Backstage medical support for dance competitions and conventions, ensuring athletes have access to qualified care throughout the event." },
+    { icon: companyIcon, title: "Company or Studio Residencies", desc: "Embedded practitioner arrangements for dance companies and studios seeking consistent, relationship-based sports medicine support throughout the season." },
   ];
 
   return (
@@ -776,7 +786,7 @@ function OnsitePage() {
       </div>
       <div style={{ maxWidth: 720, margin: "0 auto", padding: "60px 32px 80px" }}>
         <h2 style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 38, fontWeight: 300, color: "#1a1a1a", marginBottom: 8 }}>Submit an Inquiry</h2>
-        <p style={{ fontSize: 14, color: "#999", marginBottom: 40, fontFamily: "'Inter',sans-serif" }}>We'll review your request and reach out within 2–3 business days with available providers.</p>
+        <p style={{ fontSize: 14, color: "#999", marginBottom: 40, fontFamily: "'Inter',sans-serif" }}>We'll reach out within 2–3 business days to create a plan curated to your needs.</p>
         {submitted ? (
           <div style={{ textAlign: "center", padding: "60px 40px", background: "#fff", borderRadius: 20, border: "1px solid #a8e6c0" }}>
             <div style={{ fontSize: 48, marginBottom: 16 }}>✅</div>
@@ -803,17 +813,17 @@ function OnsitePage() {
                   <option>Summer Intensive</option>
                   <option>Workshop / Masterclass</option>
                   <option>Competition</option>
-                  <option>Company Residency</option>
+                  <option>Company or Studio Residency</option>
                   <option>Other</option>
                 </select>
               </div>
-              <div><label style={labelStyle}>Event Date(s) *</label><input required value={form.eventDate} onChange={(e) => setForm((f) => ({ ...f, eventDate: e.target.value }))} style={inputStyle} placeholder="e.g. June 14–18, 2025" /></div>
+              <div><label style={labelStyle}>Event Date(s)</label><input value={form.eventDate} onChange={(e) => setForm((f) => ({ ...f, eventDate: e.target.value }))} style={inputStyle} placeholder="e.g. June 14–18, 2025 (leave blank for ongoing residencies)" /></div>
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
               <div><label style={labelStyle}>Location / Venue *</label><input required value={form.location} onChange={(e) => setForm((f) => ({ ...f, location: e.target.value }))} style={inputStyle} placeholder="City, venue name" /></div>
               <div><label style={labelStyle}>Approximate # of Dancers</label><input value={form.dancers} onChange={(e) => setForm((f) => ({ ...f, dancers: e.target.value }))} style={inputStyle} placeholder="e.g. 30–50" /></div>
             </div>
-            <div><label style={labelStyle}>Additional Notes</label><textarea value={form.notes} onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))} style={{ ...inputStyle, minHeight: 100, resize: "vertical" }} placeholder="Any specific needs, styles of dance, or other details..." /></div>
+            <div><label style={labelStyle}>Additional Notes</label><textarea value={form.notes} onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))} style={{ ...inputStyle, minHeight: 100, resize: "vertical" }} placeholder="Tell us what kind of coverage you're looking for — style of dance, event size, specific needs, or anything else. We'll work out the details together." /></div>
             <button type="submit" disabled={submitting} style={{ padding: "16px 32px", borderRadius: 50, background: submitting ? "#c49" : "#9d4e6e", border: "none", color: "#fff", fontSize: 14, fontWeight: 600, cursor: submitting ? "default" : "pointer", fontFamily: "'Inter',sans-serif", letterSpacing: "0.06em", textTransform: "uppercase", alignSelf: "flex-start" }}>
               {submitting ? "Sending…" : "Submit Inquiry →"}
             </button>
@@ -850,6 +860,8 @@ function ProvidersPage() {
     accepting: "",        // "yes" | "waitlist" | "no"
     // Profile
     bio: "",
+    // Additional practice locations
+    additionalLocations: [],  // [{ address: "", cityOnly: false }]
     // Onsite interest
     onsiteInterest: "",   // "yes" | "no" | "maybe"
     // Background (private)
@@ -874,6 +886,10 @@ function ProvidersPage() {
     } catch { setAddressValid(null); }
     setAddressChecking(false);
   };
+
+  const addLocation = () => setForm((f) => ({ ...f, additionalLocations: [...f.additionalLocations, { address: "", cityOnly: false }] }));
+  const removeLocation = (idx) => setForm((f) => ({ ...f, additionalLocations: f.additionalLocations.filter((_, i) => i !== idx) }));
+  const updateLocation = (idx, field, value) => setForm((f) => ({ ...f, additionalLocations: f.additionalLocations.map((loc, i) => i === idx ? { ...loc, [field]: value } : loc) }));
 
   const certOptions = ["Dry Needling", "Pilates", "Pelvic Health", "Schroth", "Strength & Conditioning", "Gyrotonics", "Personal Trainer", "Other"];
   const toggleCert = (cert) => setForm((f) => ({ ...f, certifications: f.certifications.includes(cert) ? f.certifications.filter((c) => c !== cert) : [...f.certifications, cert] }));
@@ -915,7 +931,7 @@ function ProvidersPage() {
   const benefits = [
     { icon: dancerIcon, title: "Reach Dancers Directly", desc: "Be found by Utah dancers actively searching for specialists who understand their needs — filtered by certification, location, and insurance." },
     { icon: verifiedIcon, title: "Build Your Reputation", desc: "A listing on Utah Dance Medicine signals to the community that you have sought out training relevant to dancer care." },
-    { icon: controlIcon, title: "Stay in Control", desc: "Update your availability, accepting status, and profile details at any time. Your profile reflects your practice as it actually is." },
+    { icon: controlIcon, title: "Stay in Control", desc: "Let us know updates for your directory card and we will update it for you right away. This directory aims to be always up to date — changes in practice location, accepting patients status, insurance changes, bio updates, and more." },
   ];
 
   return (
@@ -1045,6 +1061,34 @@ function ProvidersPage() {
                     <span style={{ fontSize: 13, color: "#555", fontFamily: "'Inter',sans-serif" }}>Display city only — keep full address private (e.g. home-based practice)</span>
                   </label>
                 </div>
+                {form.additionalLocations.map((loc, idx) => (
+                  <div key={idx} style={{ borderTop: "1px dashed #e0dbd6", paddingTop: 16 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                      <label style={labelStyle}>Additional Location {idx + 2}</label>
+                      <button type="button" onClick={() => removeLocation(idx)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 12, color: "#c0392b", fontFamily: "'Inter',sans-serif", padding: 0 }}>Remove</button>
+                    </div>
+                    <input
+                      value={loc.address}
+                      onChange={(e) => updateLocation(idx, "address", e.target.value)}
+                      style={inputStyle}
+                      placeholder="123 Main St, Salt Lake City, UT 84101"
+                    />
+                    <label style={{ display: "inline-flex", alignItems: "center", gap: 8, marginTop: 10, cursor: "pointer" }}>
+                      <input
+                        type="checkbox"
+                        checked={loc.cityOnly}
+                        onChange={(e) => updateLocation(idx, "cityOnly", e.target.checked)}
+                        style={{ width: 15, height: 15, accentColor: "#9d4e6e", cursor: "pointer" }}
+                      />
+                      <span style={{ fontSize: 13, color: "#555", fontFamily: "'Inter',sans-serif" }}>Display city only</span>
+                    </label>
+                  </div>
+                ))}
+                {form.additionalLocations.length < 4 && (
+                  <button type="button" onClick={addLocation} style={{ background: "none", border: "1.5px dashed #9d4e6e", borderRadius: 10, padding: "10px 16px", cursor: "pointer", fontSize: 13, color: "#9d4e6e", fontFamily: "'Inter',sans-serif", fontWeight: 600, textAlign: "left" }}>
+                    + Add Another Location
+                  </button>
+                )}
                 <div>
                   <label style={labelStyle}>Certifications</label>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 4 }}>
