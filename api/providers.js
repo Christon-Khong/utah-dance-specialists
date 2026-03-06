@@ -38,6 +38,7 @@ export default async function handler(req, res) {
         specialty: Array.isArray(f.specialty)
           ? f.specialty
           : (f.specialty ? [f.specialty] : []),
+        practiceSpecialty: f.practiceSpecialty || "",
         // certifications stored as Multi Select in Airtable → array
         certifications: Array.isArray(f.certifications)
           ? f.certifications

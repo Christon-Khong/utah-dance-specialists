@@ -31,6 +31,19 @@ const COLOR_PALETTE = [
   { color: "#7a2040", bgLight: "#fdf0f4", borderColor: "#e8b0c8", badgeBg: "#f5d8e8", badgeText: "#5a1030" },
 ];
 
+// Normalizes legacy Airtable specialty codes to display labels matching the
+// provider application form options.
+const SPECIALTY_TO_LABEL = {
+  "PT":                 "Physical Therapy",
+  "MD":                 "Doctor/Physician",
+  "DO":                 "Doctor/Physician",
+  "Surgeon":            "Surgeon",
+  "Athletic Trainer":   "Athletic Training",
+  "Personal Trainer":   "Physical Training",
+  "Pilates Instructor": "Physical Training",
+  "Gyrotonics":         "Physical Training",
+};
+
 // Maps a provider's primary specialty to a fixed palette entry so color is
 // consistent and meaningful rather than just sequential.
 const SPECIALTY_COLORS = {
@@ -226,7 +239,7 @@ function Footer({ onNav }) {
             </div>
             <div>
               <div style={{ fontSize: 11, fontWeight: 600, color: "rgba(255,255,255,0.4)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 12, fontFamily: "'Inter',sans-serif" }}>Contact</div>
-              {[["General","info@utahdancemedicine.com"],["Providers","providers@utahdancemedicine.com"],["Press","press@utahdancemedicine.com"]].map(([label, email]) => (
+              {[["General","info@utahdancemedicine.com"]].map(([label, email]) => (
                 <div key={label} style={{ marginBottom: 8 }}>
                   <div style={{ fontSize: 11, color: "rgba(255,255,255,0.3)", fontFamily: "'Inter',sans-serif" }}>{label}</div>
                   <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", fontFamily: "'Inter',sans-serif" }}>{email}</div>
@@ -236,7 +249,7 @@ function Footer({ onNav }) {
           </div>
         </div>
         <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: 20, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
-          <p style={{ fontSize: 11, color: "rgba(255,255,255,0.2)", margin: 0 }}>© 2025 Utah Dance Medicine. All rights reserved.</p>
+          <p style={{ fontSize: 11, color: "rgba(255,255,255,0.2)", margin: 0 }}>© 2026 Utah Dance Medicine. All rights reserved.</p>
           <p style={{ fontSize: 11, color: "rgba(255,255,255,0.2)", margin: 0 }}>Providers are responsible for keeping their profiles current. Listing does not constitute endorsement.</p>
         </div>
       </div>
@@ -422,9 +435,13 @@ function DirectoryPage({ onNav }) {
   const allCertifications = useMemo(() => [...new Set(specialists.flatMap((s) => s.certifications))].sort(), [specialists]);
   const allInsurances = useMemo(() => [...new Set(specialists.flatMap((s) => s.insurances))].sort(), [specialists]);
   const allSpecialties = useMemo(() => {
-    const fromData = [...new Set(specialists.flatMap((s) => Array.isArray(s.specialty) ? s.specialty : s.specialty ? [s.specialty] : []))];
-    const canonical = ["PT", "MD", "DO", "Athletic Trainer", "Surgeon", "Pilates Instructor", "Personal Trainer", "Gyrotonics"];
-    return [...new Set([...canonical, ...fromData])].sort();
+    const labels = new Set();
+    specialists.forEach((s) => {
+      if (s.practiceSpecialty) { labels.add(s.practiceSpecialty); return; }
+      const specArr = Array.isArray(s.specialty) ? s.specialty : s.specialty ? [s.specialty] : [];
+      specArr.forEach((sp) => labels.add(SPECIALTY_TO_LABEL[sp] || sp));
+    });
+    return [...labels].sort();
   }, [specialists]);
 
   // Text / dropdown filters
@@ -477,7 +494,9 @@ function DirectoryPage({ onNav }) {
       const matchQ = !q || s.name.toLowerCase().includes(q) || s.certifications.some((c) => c.toLowerCase().includes(q)) || (s.address && s.address.toLowerCase().includes(q));
       const matchC = certs.length === 0 || certs.some((c) => s.certifications.includes(c));
       const matchI = insurance.length === 0 || insurance.some((i) => s.insurances.includes(i));
-      const sSpecialties = Array.isArray(s.specialty) ? s.specialty : s.specialty ? [s.specialty] : [];
+      const sSpecialties = s.practiceSpecialty
+        ? [s.practiceSpecialty]
+        : (Array.isArray(s.specialty) ? s.specialty : s.specialty ? [s.specialty] : []).map((sp) => SPECIALTY_TO_LABEL[sp] || sp);
       const matchS = specialty.length === 0 || specialty.some((sp) => sSpecialties.includes(sp));
       const matchAccepting = !acceptingOnly || s.acceptingPatients;
       const matchLoc = !userLat || !s.lat || haversine(userLat, userLng, s.lat, s.lng) <= radius;
@@ -532,7 +551,7 @@ function DirectoryPage({ onNav }) {
 
           {/* Specialty, Certification & Insurance dropdowns */}
           <Dropdown label="Specialty" icon="🩺" options={allSpecialties} selected={specialty} onChange={setSpecialty} />
-          <Dropdown label="Certification" icon="⭐" options={allCertifications} selected={certs} onChange={setCerts} />
+          <Dropdown label="Certifications" icon="⭐" options={allCertifications} selected={certs} onChange={setCerts} />
           <Dropdown label="Insurance" icon="🛡️" options={allInsurances} selected={insurance} onChange={setInsurance} />
 
           {/* Accepting toggle */}
@@ -590,7 +609,7 @@ function DirectoryPage({ onNav }) {
       {/* Insurance disclaimer */}
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: "12px 32px 0" }}>
         <p style={{ fontSize: 11, color: "#bbb", fontStyle: "italic", margin: 0, fontFamily: "'Inter',sans-serif" }}>
-          * Insurance coverage varies. Always verify your benefits directly with your individual insurance policy before booking.
+          <strong>* Insurance coverage varies. Always verify your benefits directly with your individual insurance policy before booking.</strong>
         </p>
       </div>
 
@@ -665,10 +684,10 @@ function AboutPage({ onNav }) {
       .catch(() => {});
   }, []);
   const pillars = [
-    { img: dancerIcon, title: "Built for Dancers", desc: "Designed around how dancers actually seek care — by certification, location, insurance, and whether a provider understands the specific demands of their art form." },
+    { img: dancerIcon, title: "Built for Dancers", desc: "Designed around how dancers actually seek care — by specialty, certifications, location, insurance, and whether a provider understands the specific demands of their art form." },
     { img: verifiedIcon, title: "Verified Specialists", desc: "Every provider is reviewed for dance-relevant training and experience before being listed. This is a curated directory, not an open registry." },
     { img: utahIcon, title: "Utah-Focused", desc: "Utah is home to incredible dance talent, yet many dancers still aren't connected with the specialized care they need. Dance medicine providers are here — and by focusing on Utah we make it easy to find nearby care, keep our directory current, and strengthen the local dance medicine community." },
-    { img: dancerIcon, title: "Always Free", desc: "In order to build a comprehensive and up-to-date directory, all parts of this website are always free — for both dancers and providers. Our only goal is to make dance medicine in Utah easily accessible and sought after." },
+    { img: verifiedIcon, title: "Always Free", desc: "In order to build a comprehensive and up-to-date directory, all parts of this website are always free — for both dancers and providers. Our only goal is to make dance medicine in Utah easily accessible and sought after." },
   ];
   return (
     <div style={{ background: "#f9f7f4", minHeight: "100vh" }}>
@@ -761,7 +780,7 @@ function OnsitePage() {
           We maintain a network of Utah Dance Medicine specialists available for onsite and backstage engagements. Submit an inquiry and we'll match you with an available provider suited to your event's needs.
         </p>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 0, maxWidth: 600, margin: "0 auto 60px" }}>
-          {[["1", "Submit an inquiry", "Tell us about your event, dates, and needs."], ["2", "We match you", "We contact available providers in our network on your behalf."], ["3", "Coverage confirmed", "We connect you directly with your matched provider to finalize details."]].map(([num, title, desc]) => (
+          {[["1", "Submit an inquiry", "Fill out the form below to help us understand what kind of coverage will be best for your needs."], ["2", "We match you", "We contact available providers in our network on your behalf."], ["3", "Coverage confirmed", "We connect you directly with your matched provider to finalize details."]].map(([num, title, desc]) => (
             <div key={num} style={{ padding: "0 16px", borderRight: num !== "3" ? "1px solid #e8e0dc" : "none" }}>
               <div style={{ width: 40, height: 40, borderRadius: "50%", background: "#9d4e6e", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, fontWeight: 600, margin: "0 auto 12px", fontFamily: "'Cormorant Garamond',serif" }}>{num}</div>
               <div style={{ fontSize: 14, fontWeight: 600, color: "#1a1a1a", marginBottom: 6, fontFamily: "'Inter',sans-serif" }}>{title}</div>
@@ -851,6 +870,7 @@ function ProvidersPage() {
     adminEmail: "",
     adminPhone: "",
     // Practice details
+    practiceSpecialty: "",
     practiceAddress: "",
     cityOnly: false,
     certifications: [],
@@ -929,7 +949,7 @@ function ProvidersPage() {
   const dividerStyle = { height: 1, background: "#ece8e4", margin: "8px 0 24px" };
 
   const benefits = [
-    { icon: dancerIcon, title: "Reach Dancers Directly", desc: "Be found by Utah dancers actively searching for specialists who understand their needs — filtered by certification, location, and insurance." },
+    { icon: dancerIcon, title: "Reach Dancers Directly", desc: "Be found by dancers in Utah actively searching for specialists who understand their needs — filtered by specialty, certifications, location, and insurance." },
     { icon: verifiedIcon, title: "Build Your Reputation", desc: "A listing on Utah Dance Medicine signals to the community that you have sought out training relevant to dancer care." },
     { icon: controlIcon, title: "Stay in Control", desc: "Let us know updates for your directory card and we will update it for you right away. This directory aims to be always up to date — changes in practice location, accepting patients status, insurance changes, bio updates, and more." },
   ];
@@ -1037,6 +1057,24 @@ function ProvidersPage() {
               <p style={{ ...sectionLabelStyle, color: "#2d7a6e" }}>Practice Details</p>
               <div style={dividerStyle} />
               <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+                <div>
+                  <label style={labelStyle}>Practice Specialty *</label>
+                  <select
+                    required
+                    value={form.practiceSpecialty}
+                    onChange={(e) => setForm((f) => ({ ...f, practiceSpecialty: e.target.value }))}
+                    style={inputStyle}
+                  >
+                    <option value="">Select your primary specialty...</option>
+                    <option>Physical Therapy</option>
+                    <option>Athletic Training</option>
+                    <option>Doctor/Physician</option>
+                    <option>Surgeon</option>
+                    <option>Physical Training</option>
+                    <option>Nutrition</option>
+                    <option>Mental Health</option>
+                  </select>
+                </div>
                 <div>
                   <label style={labelStyle}>Practice Address *</label>
                   <input
@@ -1201,13 +1239,24 @@ function ProvidersPage() {
 function ContactPage({ onNav }) {
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
-  const handleSubmit = (e) => { e.preventDefault(); setSubmitted(true); };
+  const [submitting, setSubmitting] = useState(false);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (res.ok) setSubmitted(true);
+    } catch (_) {}
+    setSubmitting(false);
+  };
   const inputStyle = { width: "100%", padding: "12px 16px", borderRadius: 10, border: "1.5px solid #e0dbd6", fontSize: 14, fontFamily: "'Inter',sans-serif", color: "#222", background: "#faf9f8", outline: "none", boxSizing: "border-box" };
   const labelStyle = { display: "block", fontSize: 12, fontWeight: 600, color: "#555", marginBottom: 6, letterSpacing: "0.06em", textTransform: "uppercase", fontFamily: "'Inter',sans-serif" };
   const contactCards = [
     { title: "General Inquiries", value: "info@utahdancemedicine.com" },
-    { title: "Provider Relations", value: "providers@utahdancemedicine.com" },
-    { title: "Press & Partnerships", value: "press@utahdancemedicine.com" },
   ];
   return (
     <div style={{ background: "#f9f7f4", minHeight: "100vh" }}>
@@ -1240,7 +1289,8 @@ function ContactPage({ onNav }) {
             </div>
           ) : (
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-              <h2 style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 30, fontWeight: 400, color: "#1a1a1a", margin: "0 0 8px" }}>Send a Message</h2>
+              <h2 style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 30, fontWeight: 400, color: "#1a1a1a", margin: "0 0 4px" }}>Send a Message</h2>
+              <p style={{ fontSize: 14, color: "#666", lineHeight: 1.75, margin: "0 0 4px", fontFamily: "'Inter',sans-serif" }}>Need to update your provider directory card? Have a suggestion or recommendation to make this site better? Have a question about the directory, or anything else on your mind? Send us a message and we'll get back to you as soon as we can.</p>
               <div className="contact-form-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                 <div><label style={labelStyle}>Name *</label><input required value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} style={inputStyle} placeholder="Your name" /></div>
                 <div><label style={labelStyle}>Email *</label><input required type="email" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} style={inputStyle} placeholder="you@example.com" /></div>
@@ -1250,14 +1300,14 @@ function ContactPage({ onNav }) {
                 <select value={form.subject} onChange={(e) => setForm((f) => ({ ...f, subject: e.target.value }))} style={inputStyle}>
                   <option value="">Select a topic...</option>
                   <option>General Question</option>
-                  <option>Provider Inquiry</option>
+                  <option>Provider Directory Update</option>
+                  <option>Suggestion / Recommendation</option>
                   <option>Onsite Services</option>
-                  <option>Partnership Opportunity</option>
                   <option>Other</option>
                 </select>
               </div>
               <div><label style={labelStyle}>Message *</label><textarea required value={form.message} onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))} style={{ ...inputStyle, minHeight: 140, resize: "vertical" }} placeholder="How can we help?" /></div>
-              <button type="submit" style={{ padding: "15px 30px", borderRadius: 50, background: "#9d4e6e", border: "none", color: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "'Inter',sans-serif", letterSpacing: "0.06em", textTransform: "uppercase", alignSelf: "flex-start" }}>Send Message →</button>
+              <button type="submit" disabled={submitting} style={{ padding: "15px 30px", borderRadius: 50, background: submitting ? "#c49" : "#9d4e6e", border: "none", color: "#fff", fontSize: 13, fontWeight: 600, cursor: submitting ? "default" : "pointer", fontFamily: "'Inter',sans-serif", letterSpacing: "0.06em", textTransform: "uppercase", alignSelf: "flex-start" }}>{submitting ? "Sending…" : "Send Message →"}</button>
             </form>
           )}
         </div>
@@ -1282,6 +1332,7 @@ export default function App() {
     const path = p === "directory" ? "/" : "/" + p;
     window.history.pushState({}, "", path);
     setPage(p);
+    window.scrollTo({ top: 0, behavior: "instant" });
   }, []);
 
   useEffect(() => {

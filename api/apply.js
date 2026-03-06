@@ -63,6 +63,8 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Invalid onsite interest value" });
   }
 
+  const practiceSpecialty = str(b.practiceSpecialty, 100);
+
   const certifications = Array.isArray(b.certifications)
     ? b.certifications.filter((c) => typeof c === "string").slice(0, 20).map((c) => c.slice(0, 200))
     : [];
@@ -85,6 +87,7 @@ export default async function handler(req, res) {
     adminPhone,
     address:           practiceAddress,
     cityOnly:          b.cityOnly === true,
+    practiceSpecialty,
     certifications,
     certificationsOther: str(b.certificationsOther, 1000),
     insurances,
