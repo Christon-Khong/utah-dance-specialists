@@ -1,8 +1,12 @@
-// Vercel serverless function — returns all unique insurance values.
-// Merges a hardcoded baseline list of common Utah insurances with any
-// additional values already entered by providers in Airtable.
-// Only insurance names are returned — no private provider data is exposed.
-// GET /api/insurance-options  →  returns { options: [...] }
+// Vercel serverless function — returns all insurance options for the For Providers form.
+//
+// Source priority:
+//   1. Airtable Metadata API — reads the defined choices on the "insurances" field
+//      directly, so any option added to the field in Airtable appears automatically
+//      even if no provider record has selected it yet.
+//   2. Baseline fallback — used if Airtable is unreachable or env vars are missing.
+//
+// GET /api/insurance-options  ->  { options: [...] }
 
 const BASELINE_INSURANCES = [
   "Aetna",
@@ -29,32 +33,34 @@ export default async function handler(req, res) {
   const token  = process.env.AIRTABLE_TOKEN;
   const baseId = process.env.AIRTABLE_BASE_ID;
 
-  const seen = new Set(BASELINE_INSURANCES);
-
   if (token && baseId) {
-    const table = encodeURIComponent("Providers");
-    const url   = `https://api.airtable.com/v0/${baseId}/${table}?fields[]=insurances&pageSize=100`;
-
     try {
-      const airtableRes = await fetch(url, {
+      // Fetch table schema via Airtable Metadata API
+      const metaRes = await fetch(`https://api.airtable.com/v0/meta/bases/${baseId}/tables`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      if (airtableRes.ok) {
-        const { records } = await airtableRes.json();
-        records.forEach((record) => {
-          const ins = record.fields.insurances;
-          if (Array.isArray(ins)) ins.forEach((i) => seen.add(i.trim()));
-          else if (typeof ins === "string") ins.split(",").map((i) => i.trim()).filter(Boolean).forEach((i) => seen.add(i));
-        });
+      if (metaRes.ok) {
+        const { tables } = await metaRes.json();
+        const providersTable = tables.find((t) => t.name === "Providers");
+        const insurancesField = providersTable?.fields.find(
+          (f) => f.name === "insurances" && f.options?.choices
+        );
+
+        if (insurancesField) {
+          // choices is an array of { id, name, color } — extract names and sort
+          const options = insurancesField.options.choices.map((c) => c.name).sort();
+          res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate=60");
+          return res.status(200).json({ options });
+        }
       }
     } catch (_) {
-      // Fall through — baseline list still returned
+      // Fall through to baseline
     }
   }
 
-  const options = [...seen].sort();
-
-  res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate=60");
+  // Fallback: return hardcoded baseline sorted
+  const options = [...BASELINE_INSURANCES].sort();
+  res.setHeader("Cache-Control", "s-maxage=60, stale-while-revalidate=30");
   return res.status(200).json({ options });
 }
